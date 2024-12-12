@@ -18,44 +18,61 @@
 <div class="root">
     <div class="container-shell">
         <div id="container"></div>
-        <div class="input">
+        <div class="input" style="border-bottom: 1px solid">
             <div>
-                <span>M7S的webrtc地址：</span>webrtc://localhost:8080/webrtc/play/live/test <br>
+                <span>M7S的webrtc地址：</span>webrtc://localhost:8080/webrtc/play/{live/test} <br>
                 <span style="color: red">注意 'live/test' 是streamPath</span>
             </div>
         </div>
-        <div class="input">
+        <div class="input" style="border-bottom: 1px solid">
             <div>
-                <span>ZLM的webrtc地址：</span>http://127.0.0.1/index/api/webrtc?app=live&stream=test&type=play <br>
-                <span style="color:red;">注意：将zlm的webrtc播放地址，https:// 修改为 webrtc:// 就可以了</span>即：webrtc://127.0.0.1/index/api/webrtc?app=live&stream=test&type=play
+                <span>ZLM的webrtc地址：</span>http://127.0.0.1/index/api/webrtc?app=live&stream={test}&type=play <br>
+                <span style="color:red;">注意：将zlm的webrtc播放地址，https:// 修改为 webrtc:// 就可以了</span>即：webrtc://127.0.0.1/index/api/webrtc?app=live&stream={test}&type=play
             </div>
         </div>
-        <div class="input">
+        <div class="input" style="border-bottom: 1px solid">
             <div>
-                <span>SRS的webrtc地址：</span>webrtc://127.0.0.1/live/livestream <br>
-                <span style="color:red;">注意：将SRS的path前面拼接个/rtc/v1/play/就可以了</span>即：webrtc://r.ossrs.net/rtc/v1/play/live/livestream
+                <span>SRS的webrtc地址：</span>webrtc://127.0.0.1/live/{livestream} <br>
+                <span style="color:red;">注意：将SRS的path前面拼接个/rtc/v1/play/就可以了</span>即：webrtc://127.0.0.1/rtc/v1/play/live/{livestream}
             </div>
         </div>
-        <div class="input">
+        <div class="input" style="border-bottom: 1px solid">
             <div>
-                <input onchange="replayByType('srs')" type="checkbox" id="isForSRS"><span>SRS Webrtc服务器</span>
-                <input onchange="replayByType('zlm')" type="checkbox" id="isForZLM"><span>ZLM Webrtc服务器</span>
-
+                <div>
+                    <input
+                        type="checkbox"
+                        id="isWebrtcForSRS"
+                    /><span>SRS服务器</span>
+                    <span style="color: green">webrtc://127.0.0.1/rtc/v1/play/live/{livestream}</span>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="webrtcForSRSBySDK"
+                    /><span>SRS服务器新版本</span>
+                    <span style="color: green">webrtc://114.235.182.210/live/{liveStream}</span>
+                </div>
             </div>
         </div>
-        <div class="input">
+        <div class="input" style="border-bottom: 1px solid">
             <div>
                 <input
-                    onchange="replayByType('others')"
+                    type="checkbox"
+                    id="isWebrtcForZLM"
+                /><span>ZLM服务器</span>
+            </div>
+            <span style="color: green">webrtc://127.0.0.1/index/api/webrtc?app=live&stream=test&type=play</span>
+
+        </div>
+        <div class="input" style="border-bottom: 1px solid">
+            <div>
+                <input
                     type="checkbox"
                     id="isForOthers"
                 /><span>其他Webrtc服务器</span>
-                <span>其他的webrtc地址：</span>webrtc://127.0.0.1/test/sdp <br>
+                <span>其他的webrtc地址：</span><span style="color: green">webrtc://127.0.0.1/test/sdp</span> <br>
                 播放器是不会根据url上面的路径来检测的的。
             </div>
-        </div>
-        <div class="input">
-            <a href="/pro-webrtc.html">对接SRS和zlmedia的详细文档</a>
         </div>
         <div class="input">
             <div>输入URL：</div>
@@ -63,7 +80,7 @@
                 autocomplete="on"
                 id="playUrl"
                 placeholder="webrtc://"
-                value=""
+                value="webrtc://localhost:8080/webrtc/play/live/test"
             />
             <button id="play">播放</button>
             <button id="pause" style="display: none">停止</button>
@@ -82,10 +99,9 @@
     var $container = document.getElementById('container');
     var $destroy = document.getElementById('destroy');
     var $isForOthers = document.getElementById('isForOthers');
-    var $isForSRS = document.getElementById('isForSRS');
-    var $isForZLM = document.getElementById('isForZLM');
-
-
+    var $isWebrtcForSRS = document.getElementById('isWebrtcForSRS');
+    var $webrtcForSRSBySDK = document.getElementById('webrtcForSRSBySDK');
+    var $isWebrtcForZLM = document.getElementById('isWebrtcForZLM');
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -99,9 +115,6 @@
             text: "",
             loadingText: "加载中",
             debug: true,
-            useWCS: true,
-            // useMSE:true,
-            // useSIMD:false,
             debugLevel: "debug",
             showBandwidth: showOperateBtns, // 显示网速
             showPerformance: showOperateBtns, // 显示性能
@@ -117,10 +130,15 @@
             heartTimeoutReplayUseLastFrameShow: true,
             audioEngine: "worklet",
             isNotMute: false,
-            heartTimeout: 10,
+            heartTimeout: 1000,
+            useMSE: true,
+            useWCS: true,
             isWebrtcForOthers: $isForOthers.checked === true,
-            isWebrtcForZLM: $isForZLM.checked === true,
-            isWebrtcForSRS: $isForSRS.checked === true,
+            isEmitSEI: true,
+            isWebrtcForSRS: $isWebrtcForSRS.checked === true,
+            webrtcForSRSBySDK: $webrtcForSRSBySDK.checked === true,
+
+            // videoRenderType:'canvas'
         },);
 
 
@@ -132,12 +150,20 @@
             // console.log('timeUpdate', value);
         })
 
-        jessibuca.on(JessibucaPro.EVENTS.playFailedAndPaused, (error) => {
-            jessibuca.showErrorMessageTips('播放异常：' + error);
-        })
-
         jessibuca.on(JessibucaPro.EVENTS.crashLog, (log) => {
             console.log('crashLog', log)
+        })
+        jessibuca.on('currentPts', (pts) => {
+            // console.error('currentPts', pts);
+        })
+
+        jessibuca.on('videoSEISyncPts', (value) => {
+            const decoder = new TextDecoder(); // 创建一个 TextDecoder 对象
+            let str = decoder.decode(value.data);
+
+            console.log(`videoSEISyncPts pts is ${value.pts} ,ts is ${value.ts}, data is`, value.data, str);
+
+
         })
 
 
@@ -152,14 +178,13 @@
     function play() {
         var href = $playHref.value;
         if (href) {
-            jessibuca.play(href).catch((error) => {
-                jessibuca.showErrorMessageTips(error.toString());
+            jessibuca.play(href, {
+                username: 'test',
+                password: 'test',
             });
             $player.style.display = 'none';
             $pause.style.display = 'inline-block';
             $destroy.style.display = 'inline-block';
-        } else {
-            jessibuca.showErrorMessageTips('播放地址不能为空');
         }
     }
 
@@ -176,22 +201,8 @@
         }
     }
 
-    function replayByType(type) {
-        $isForZLM.checked = false;
-        $isForSRS.checked = false;
-        $isForOthers.checked = false;
-        if (type === 'srs') {
-            $isForSRS.checked = true;
-        } else if (type === 'zlm') {
-            $isForZLM.checked = true;
-        } else if (type === 'others') {
-            $isForOthers.checked = true;
-        }
-        replay();
-    }
-
     $player.addEventListener('click', function () {
-        play();
+        replay();
     }, false)
 
 
@@ -209,8 +220,43 @@
         } else {
             create();
         }
-
     })
+
+    $webrtcForSRSBySDK.addEventListener('click', function () {
+        if ($webrtcForSRSBySDK.checked === true) {
+            $isWebrtcForSRS.checked = true;
+
+            $isWebrtcForZLM.checked = false;
+            $isForOthers.checked = false;
+        }
+    })
+    $isWebrtcForSRS.addEventListener('click', function () {
+        if ($isWebrtcForSRS.checked === false) {
+            $webrtcForSRSBySDK.checked = false;
+        }
+        if ($isWebrtcForSRS.checked === true) {
+            $isWebrtcForZLM.checked = false;
+            $isForOthers.checked = false;
+        }
+    })
+
+    $isWebrtcForZLM.addEventListener('click', function () {
+        if ($isWebrtcForZLM.checked === true) {
+            $isWebrtcForSRS.checked = false;
+            $webrtcForSRSBySDK.checked = false;
+            $isForOthers.checked = false;
+        }
+    })
+
+    $isForOthers.addEventListener('click', function () {
+        if ($isForOthers.checked === true) {
+            $isWebrtcForSRS.checked = false;
+            $webrtcForSRSBySDK.checked = false;
+            $isWebrtcForZLM.checked = false;
+        }
+    })
+
+
 </script>
 
 </body>
