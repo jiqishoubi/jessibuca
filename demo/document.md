@@ -185,6 +185,10 @@ const instance = new window.Jessibuca({})
 
 https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&inviteCode=21lyeGcXwMe&contentID=1qiMyF&businessType=2&from=181174&shareSource=5&biz=ka
 
+m7s 产品下载地址:[https://m7s.live/download](https://m7s.live/download)
+
+m7s 官网介绍：[https://m7s.live/](https://m7s.live/)
+
 ### jessibuca.js decoder.js decoder.wasm文件想存放特定地址
 
 一般情况下，建议放置在 `public` 目录下面，如果需要放置在子目录，需要修改的地方有
