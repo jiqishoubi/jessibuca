@@ -16,7 +16,6 @@
 
 [https://jessibuca.com/pro.zip](https://jessibuca.com/pro.zip)
 
-
 ## vue 版本
 vue3(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro](https://github.com/bosscheng/jessibuca-vue-demo/tree/pro)
 
@@ -28,6 +27,12 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 ## react 版本
 
 [https://github.com/bosscheng/jessibuca-react-demo/tree/pro](https://github.com/bosscheng/jessibuca-react-demo/tree/pro)
+
+## https 版本
+
+[https://github.com/bosscheng/jessibuca-pro-wasm-multi-thread-demo](https://github.com/bosscheng/jessibuca-pro-wasm-multi-thread-demo)
+
+> 可以测试 wasm 的多线程能力
 
 ## 导航Index
 #### https

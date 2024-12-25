@@ -47,7 +47,7 @@ https://developer.chrome.com/origintrials/?utm_source=devtools#/view_trial/30399
 需要在服务器上配置`cross-origin-isolated`头
 
 
-以node 为例
+#### 以node 为例
 ```js
 app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
@@ -56,7 +56,11 @@ app.use((req, res, next) => {
 })
 ```
 
-nginx 配置
+可以跑下官方demo
+
+[https://github.com/bosscheng/jessibuca-pro-wasm-multi-thread-demo](https://github.com/bosscheng/jessibuca-pro-wasm-multi-thread-demo)
+
+#### nginx 配置
 
 ```nginx
 add_header Cross-Origin-Opener-Policy same-origin;
