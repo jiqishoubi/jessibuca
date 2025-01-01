@@ -26,3 +26,5 @@ sidebar: false
 [测试地址](pro-demo.html#点播demo-支持mse、wcs、wasm、simd)
 
 
+关于 `FLV` 点播支持的 [依赖条件](pro-vod-flv.html)
+
