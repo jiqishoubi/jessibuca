@@ -374,7 +374,7 @@
             }).then(() => {
 
             }).catch((error) => {
-                jessibuca.showErrorMessageTips(error.toString());
+                jessibuca.showErrorMessageTips('播放异常：' + error);
             });
         }
         isPlaybackPause = false;

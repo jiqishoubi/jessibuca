@@ -367,8 +367,8 @@
                 ],
                 useWCS: $useWCS.checked,
                 useMSE: $useMSE.checked,
-            }).catch((error) => {
-                jessibuca.showErrorMessageTips(error.toString());
+            }).catch((e) => {
+                jessibuca.showErrorMessageTips('播放异常：' + e);
             });
         }
         isPlaybackPause = false;
