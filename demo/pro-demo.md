@@ -154,6 +154,14 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/playback-simple-demo.html](http://jessibuca.monibuca.com/pro/playback-simple-demo.html)
 
+### 特殊回放流(支持暂停缓存数据，本地倍率，不支持seek)
+
+#### https
+[https://jessibuca.com/pro/playback-simple-demo-forward.html](https://jessibuca.com/pro/playback-simple-demo-forward.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/playback-simple-demo-forward.html](http://jessibuca.monibuca.com/pro/playback-simple-demo-forward.html)
+
 
 ## 点播Demo(支持mse、wcs、wasm、simd)
 
