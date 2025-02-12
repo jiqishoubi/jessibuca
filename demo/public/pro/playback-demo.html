@@ -126,13 +126,6 @@
             </div>
         </div>
         <div class="input">
-            <span>是否解码前缓冲数据(定频生效)</span>
-            <select id="isCacheBeforeDecodeForFpsRender" style="width: 50px">
-                <option value="true">是</option>
-                <option value="false" selected>否</option>
-            </select>
-        </div>
-        <div class="input">
             <span>是否显示操作按钮</span>
             <select id="isShowControl" style="width: 50px">
                 <option value="true" selected>是</option>
@@ -156,12 +149,7 @@
             </select>
         </div>
         <div class="input">
-            <div class="playback-fps" style="margin-left: 10px">
-                <span>FPS（定频(本地设置)生效）：</span><input style="width: 50px" type="text" id="playbackFps" value="25">帧
-            </div>
-        </div>
-        <div class="input">
-            <div class="playback-fps" style="margin-left: 10px">
+            <div>
                 <span>不断流暂停是否清除缓存数据</span>
                 <select id="isPlaybackPauseClearCache" style="width: 50px">
                     <option value="true" selected>是</option>
@@ -229,12 +217,10 @@
     var $container = document.getElementById('container');
     var $destroy = document.getElementById('destroy');
     var $playbackTime = document.getElementById('playbackTimes');
-    var $playbackFps = document.getElementById('playbackFps');
     var $isUseFpsRender = document.getElementById('isUseFpsRender');
     var $isShowControl = document.getElementById('isShowControl'); // 是否显示按钮
     var $isShow24H = document.getElementById('isShow24H'); // 是否显示24H操作栏
     var $onlyDecoderIFrame = document.getElementById('onlyDecoderIFrame');
-    var $isCacheBeforeDecodeForFpsRender = document.getElementById('isCacheBeforeDecodeForFpsRender');
     var $isPlaybackPauseClearCache = document.getElementById('isPlaybackPauseClearCache');
     var $uiUsePlaybackPause = document.getElementById('uiUsePlaybackPause');
     var $supportWebgpu = document.getElementById('supportWebgpu');
@@ -338,11 +324,9 @@
     function play() {
         var href = $playHref.value;
         var playTimes = $playbackTime.value;
-        var playFps = $playbackFps.value || 20;
         var isUseFpsRender = $isUseFpsRender.value;
         var playTimesArray = JSON.parse(playTimes);
         const isShow24H = $isShow24H.value === 'true';
-        const isCacheBeforeDecodeForFpsRender = $isCacheBeforeDecodeForFpsRender.value === 'true';
 
         if (!href) {
             return
@@ -353,10 +337,9 @@
         } else {
             jessibuca.playback(href, {
                 playList: playTimesArray,
-                fps: playFps,
                 showControl: isShow24H,
                 isUseFpsRender: isUseFpsRender === 'true',
-                isCacheBeforeDecodeForFpsRender: isCacheBeforeDecodeForFpsRender,
+                isCacheBeforeDecodeForFpsRender: isUseFpsRender === 'true',
                 showRateBtn: true,
                 supportWheel: true,
                 uiUsePlaybackPause: $uiUsePlaybackPause.value === 'true',

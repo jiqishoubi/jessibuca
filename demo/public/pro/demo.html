@@ -92,18 +92,20 @@
             </div>
         </div>
         <div class="input">
-            <span>渲染标签：</span>
-            <select id="renderDom" onchange="replay()">
-                <option value="video" selected>video</option>
-                <option value="canvas">canvas</option>
-            </select>
+            <div>
+                <span>渲染标签：</span>
+                <select id="renderDom" onchange="replay()">
+                    <option value="video" selected>video</option>
+                    <option value="canvas">canvas</option>
+                </select>
 
-            <span>canvas渲染技术：</span>
-            <select id="isUseWebGPU" onchange="replay()">
-                <option value="webgl" selected>webgl</option>
-                <option value="webgpu">webgpu</option>
-            </select>
-            <span id="supportWebgpu"></span>
+                <span>canvas渲染技术：</span>
+                <select id="isUseWebGPU" onchange="replay()">
+                    <option value="webgl" selected>webgl</option>
+                    <option value="webgpu">webgpu</option>
+                </select>
+                <span id="supportWebgpu"></span>
+            </div>
         </div>
         <div class="input">
             <div>

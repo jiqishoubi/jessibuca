@@ -65,6 +65,7 @@ body {
     max-width: 960px;
     color: white;
     place-content: stretch;
+    justify-content: start;
 }
 
 .input2 {
