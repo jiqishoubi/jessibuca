@@ -349,6 +349,14 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/demo-mpeg4.html](http://jessibuca.monibuca.com/pro/demo-mpeg4.html)
 
+### M7S格式
+------
+#### https
+[https://jessibuca.com/pro/demo-m7s.html](https://jessibuca.com/pro/demo-m7s.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/demo-m7s.html](http://jessibuca.monibuca.com/pro/demo-m7s.html)
+
 
 ### M7S加密流(H264/H265)
 ------

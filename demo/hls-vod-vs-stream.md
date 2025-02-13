@@ -37,7 +37,7 @@ http://example.com/segment4.ts
 #EXT-X-ENDLIST
 ```
 
-### 解释：
+#### 解释：
 1. **#EXTM3U**：文件头，表示这是一个 M3U8 文件。
 2. **#EXT-X-VERSION:3**：指定 HLS 协议的版本，这里是版本 3。
 3. **#EXT-X-TARGETDURATION:10**：指定每个媒体段的最大持续时间（秒），这里是 10 秒。
@@ -46,7 +46,7 @@ http://example.com/segment4.ts
 6. **http://example.com/segment0.ts**：媒体段的 URL。
 7. **#EXT-X-ENDLIST**：表示播放列表的结束。
 
-### 注意：
+#### 注意：
 - 每个媒体段（`.ts` 文件）的 URL 可以是绝对路径或相对路径。
 - 如果流是直播流，可能不会有 `#EXT-X-ENDLIST` 标签，因为播放列表会不断更新。
 
@@ -75,7 +75,7 @@ http://example.com/live/segment125.ts
 http://example.com/live/segment126.ts
 ```
 
-### 直播流的特点：
+#### 直播流的特点：
 1. **没有 `#EXT-X-ENDLIST` 标签**：
     - 直播流是动态生成的，播放列表会不断更新，因此不会标记结束。
 
@@ -95,7 +95,7 @@ http://example.com/live/segment126.ts
 
 ---
 
-### 直播流的工作流程：
+#### 直播流的工作流程：
 1. **客户端请求 M3U8 文件**：
     - 客户端（如播放器）首先请求 M3U8 文件，获取当前的播放列表。
 
@@ -111,7 +111,7 @@ http://example.com/live/segment126.ts
 
 ---
 
-### 示例：更新后的 M3U8 文件
+#### 示例：更新后的 M3U8 文件
 假设直播流继续生成新的媒体段，更新后的 M3U8 文件可能如下：
 
 ```plaintext
