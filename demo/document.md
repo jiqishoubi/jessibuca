@@ -2196,7 +2196,9 @@ https://www.dyxmq.cn/network/err_cert_common_name_invalid.html
 
 #### Pro 版本
 
-Pro版本支持所有的格式，如果播放的地址不带后缀，播放器会默认识别为`m7s`的私有格式。
+Pro版本支持所有的格式，如果播放的地址(ws(s)协议)不带后缀，播放器会默认识别为`m7s`的私有格式。
+
+如果是http(s)协议，如果播放器地址不带后缀，则会抛出异常 `protocol is fetch, demuxType is null`。
 
 同理，如下想法按照某种特定格式解析播放的，例如 `flv`协议解析,则需要配置`isFlv:true`就行了，例如 `裸流的格式`，
 则需要配置`isNakedFlow:true`就行了
