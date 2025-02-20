@@ -493,6 +493,8 @@ export default {
     margin-top: 10px;
     color: white;
     place-content: stretch;
+    justify-content: start;
+
 }
 
 .input2 {

@@ -1478,6 +1478,7 @@ export default {
     color: white;
     place-content: stretch;
     border-bottom: 1px solid #ccc;
+    justify-content: start;
 }
 
 .input-wrap {

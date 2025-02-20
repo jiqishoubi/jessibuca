@@ -152,6 +152,8 @@
         <div class="input">
             <button onclick="screenshot('text')">截图(文字水印)</button>
             <button onclick="screenshot('img')">截图(图片水印)</button>
+            <button onclick="screenshot('text',true)">截图(文字水印)base64</button>
+            <button onclick="screenshot('img',true)">截图(图片水印)base64</button>
         </div>
         <div class="input">
             <input type="text" value="" placeholder="输入暗水印的内容：可以是公司名称，版本信息等" id="copyright">
@@ -159,6 +161,9 @@
         </div>
         <div class="input">
             检查生产的文件是否有水印：<a href="./demo-screenshot-check.html" target="_blank">检查</a>
+        </div>
+        <div class="input">
+            <img src="" id="screenshotImg" style="display: none"/>
         </div>
     </div>
 </div>
@@ -187,6 +192,7 @@
     var $replayShowLoadingIcon = document.getElementById('replayShowLoadingIcon');
     var $mseDecoderUseWorker = document.getElementById('mseDecoderUseWorker');
     var $copyright = document.getElementById('copyright');
+    var $screenshotImg = document.getElementById('screenshotImg');
 
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
@@ -263,6 +269,8 @@
         $player.style.display = 'inline-block';
         $pause.style.display = 'none';
         $destroy.style.display = 'none';
+        $screenshotImg.src = '';
+        $screenshotImg.style.display = 'none';
         $fps.textContent = '';
     }
 
@@ -272,9 +280,7 @@
     function play() {
         var href = $playHref.value;
         if (href) {
-            jessibuca.play(href).catch((error) => {
-                jessibuca.showErrorMessageTips(error.toString());
-            });
+            jessibuca.play(href);
             $player.style.display = 'none';
             $pause.style.display = 'inline-block';
             $destroy.style.display = 'inline-block';
@@ -363,7 +369,11 @@
         replay();
     })
 
-    function screenshot(type) {
+    function screenshot(type,isBase64) {
+        if(isBase64){
+            $screenshotImg.src = '';
+            $screenshotImg.style.display = 'none';
+        }
         if (type === 'text') {
             jessibuca.screenshotWatermark({
                 text: {
@@ -372,9 +382,14 @@
                     color: 'red'
                 },
                 right: 20,
-                top: 40
+                top: 40,
+                type:isBase64?'base64':'download'
             }).then((file) => {
                 console.log('screenshotWatermark text success');
+                if(isBase64){
+                    $screenshotImg.src = file;
+                    $screenshotImg.style.display = 'block';
+                }
             }).catch((e) => {
                 console.log('screenshotWatermark error', e);
             });
@@ -387,8 +402,13 @@
                 },
                 right: 20,
                 top: 20,
+                type:isBase64?'base64':'download'
             }).then((file) => {
                 console.log('screenshotWatermark image success');
+                if(isBase64){
+                    $screenshotImg.src = file;
+                    $screenshotImg.style.display = 'block';
+                }
             }).catch((e) => {
                 console.log('screenshotWatermark error', e);
             });
