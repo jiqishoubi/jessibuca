@@ -81,12 +81,15 @@
                         id="isFFmpegSIMD"
                         onclick="replay()"
                     /><span>isSIMD(V2)</span>
-                    <input
-                        type="checkbox"
-                        checked
-                        id="useSIMDMThreading"
-                        onclick="replay()"
-                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    <span id="useSIMDMThreadingWrap">
+                        <input
+                            type="checkbox"
+                            checked
+                            id="useSIMDMThreading"
+                            onclick="replay()"
+                        /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    </span>
+
                     <span style="color: green">默认使用wasm解码器</span>
                 </div>
             </div>

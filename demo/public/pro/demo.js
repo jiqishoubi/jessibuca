@@ -186,10 +186,17 @@ var notSupportSimdMtSupport = document.getElementById('simdMtNotSupport');
 
 
 if (supportSimdMtSupport) {
+    let useSIMDMThreading = document.getElementById('useSIMDMThreadingWrap');
     if (supportSharedArrayBuffer()) {
         supportSimdMtSupport.style.display = 'inline-block';
+        if(useSIMDMThreading){
+            useSIMDMThreading.style.display = 'inline-block';
+        }
     } else {
         notSupportSimdMtSupport.style.display = 'inline-block';
+       if(useSIMDMThreading){
+           useSIMDMThreading.style.display = 'none';
+       }
     }
 }
 
