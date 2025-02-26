@@ -92,29 +92,7 @@
                 </div>
             </div>
         </div>
-        <div class="input">
-            <span>渲染标签：</span>
-            <select id="renderDom" onchange="replay()">
-                <option value="video" selected>video</option>
-                <option value="canvas">canvas</option>
-            </select>
 
-            <span>canvas渲染技术：</span>
-            <select id="isUseWebGPU" onchange="replay()">
-                <option value="webgl" selected>webgl</option>
-                <option value="webgpu">webgpu</option>
-            </select>
-            <span id="supportWebgpu"></span>
-        </div>
-        <div class="input">
-            <div>
-                <span>缓存时长：</span>
-                <input placeholder="单位：秒" type="text" id="videoBuffer" style="width: 50px" value="0.2">秒
-                <span>缓存延迟(延迟超过会触发丢帧)：</span>
-                <input placeholder="单位：秒" type="text" id="videoBufferDelay" style="width: 50px" value="1">秒
-                <button id="replay">重播</button>
-            </div>
-        </div>
         <div class="input">
             <div>
                 <input
@@ -156,6 +134,12 @@
         <div class="input">
             <button id="playVodForward">快进10s</button>
             <button id="playVodBackword">快退10s</button>
+            <select id="forward" onchange="changeForward()">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="4">4</option>
+            </select>
+            <button onclick="getPlayVodIsPause()">当前状态</button>
         </div>
         <div class="input" style="line-height: 30px">
             <button id="destroy">销毁</button>
@@ -178,6 +162,8 @@
     var $playVodForward = document.getElementById('playVodForward');
     var $playVodBackword = document.getElementById('playVodBackword');
     var $isHls = document.getElementById('isHls');
+    var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
+
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -196,6 +182,7 @@
             debug: true,
             debugLevel: 'debug',
             isFFmpegSIMD: $isFFmpegSIMD.checked === true,
+            useMThreading: $useSIMDMThreading.checked === true,
             decoderErrorAutoWasm: false,
             timeout: 10000,
             // showPerformance: true,
@@ -356,6 +343,19 @@
             jessibuca.playVodBackwordJumping(10);
         }
     })
+
+    function getPlayVodIsPause() {
+        if (jessibuca) {
+            console.log('getPlayVodIsPause', jessibuca.isPlayVodPaused());
+        }
+    }
+
+    function changeForward() {
+        const forward = document.getElementById('forward').value;
+        if (jessibuca) {
+            jessibuca.playVodForward(forward);
+        }
+    }
 
 
 </script>
