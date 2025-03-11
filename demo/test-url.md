@@ -108,13 +108,18 @@ https://voddemo-play.volcvod.com/8d1417d814b24fee8b8b0c2747f303e5/main.m3u8?a=0&
 #### h264
 https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/flv/xgplayer-demo-360p.flv
 
+https://flvplayer.js.org/assets/video/weathering-with-you.flv
 
 ### mp4
 
 #### h265
 
 
-https://2dland.cn/test/test_video_h265.mp4   // 4k
+##### 4k
+https://2dland.cn/test/test_video_h265.mp4
+
+##### 720p
+https://ks3-cn-beijing.ksyun.com/ksplayer/h265/mp4_resource/jinjie_265.mp4
 
 
 #### h264
