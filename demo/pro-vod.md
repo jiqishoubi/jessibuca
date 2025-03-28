@@ -13,7 +13,7 @@
 <Rice/>
 
 
-## MP4放进去以后一直加载不成功怎么办
+## MP4放进去以后一直加载不成功怎么办（有报错信息）
 
 > 播放器会报：“cannot find moov or mdat box” 错误
 
@@ -65,3 +65,13 @@ ffmpeg -i input.mp4 -vcodec copy -acodec copy -movflags faststart -y output.mp4
 
 见图
 <img src="/public/img/vod-coreProbePart.png">
+
+
+
+## MP4放进去以后一直加载不成功怎么办（无报错信息）
+
+检查下Network的是否正在大量下载数据，如果是这样，那就是可能服务器不支持Range请求，导致需要等到完整的文件下载完毕才能播放。
+
+解决方法：
+
+1. 服务器支持Range请求即可。
