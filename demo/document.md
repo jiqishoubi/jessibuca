@@ -1749,16 +1749,18 @@ useWCS:false
 
 1. https://zhuanlan.zhihu.com/p/351747258
 
-### 关于播放器内部自定义DOM
+### 关于播放器内部自定义DOM（废弃）
 
-业务需要有自己的dom在播放器内部，例如
+> 因为在销毁播放器的时候，如果不清空container的innerHTML，可能会导致播放器销毁的时候，有DOM内存不释放的问题。所以这个功能废弃掉了。
+
+~~业务需要有自己的dom在播放器内部，例如~~
 
 ```html
 
 <div id="container"></div>
 ```
 
-当初始化播放器，传递 `container` 参数的时候，播放器会在 `container` 内部创建播放器的`DOM`
+~~当初始化播放器，传递 `container` 参数的时候，播放器会在 `container` 内部创建播放器的`DOM`~~
 
 ```html
 
@@ -1769,7 +1771,7 @@ useWCS:false
 </div>
 ```
 
-如果业务需在播放器内部有自己的`DOM`，可以直接在`container`内部创建，播放器会自动识别并不会覆盖。
+~~如果业务需在播放器内部有自己的`DOM`，可以直接在`container`内部创建，播放器会自动识别并不会覆盖。~~
 
 ```html
 
@@ -1783,7 +1785,7 @@ useWCS:false
 
 ```
 
-小结： 所以在初始化播放器的时候，业务可以通过在container内部创建自己的dom。
+~~小结： 所以在初始化播放器的时候，业务可以通过在container内部创建自己的dom。~~
 
 ```html
 
@@ -1793,9 +1795,32 @@ useWCS:false
 </div>
 ```
 
-待播放器初始化的时候，播放器只会在container内部创建自己的dom，不会覆盖业务自己的dom。
+~~待播放器初始化的时候，播放器只会在container内部创建自己的dom，不会覆盖业务自己的dom。~~
 
-> 调用播放器destroy() 方法的时候，播放器内部也只会销毁掉播放器创建的dom，不会销毁业务自己创建的dom。
+~~> 调用播放器destroy() 方法的时候，播放器内部也只会销毁掉播放器创建的dom，不会销毁业务自己创建的dom。~~
+
+
+### 关于播放器自定义DOM（新）
+
+给播放器的dom 对象是
+
+```html
+<div id="container"></div>
+```
+
+如果需要自定义DOM,可以在`container` 外部包裹一层DOM。
+
+```html
+<div class="your-dom">
+    <div id="container"></div>
+    <!--    业务DOM-->
+    <div class="your-dom">业务自己的dom</div>
+</div>
+
+```
+
+> 全屏的实现就需要业务层自己通过全屏api 来实现 `your-dom` 的全屏。全屏之后，调用下播放器的`resize()` 方法就行了，其他的照旧。
+
 
 ### 直播流播放完了，能监听到吗？
 
