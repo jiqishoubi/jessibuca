@@ -786,7 +786,7 @@ jessibuca.toggleControlBar()
 const isShow = jessibuca.getControlBarShow()
 ```
 
-### kbpsToSpeed(kbps)
+### kbps2Speed(kbps)
 - **用法**： 码率转换成网速 kbps -> KB/s
 - **返回**：`{number}`
 
@@ -794,7 +794,7 @@ const isShow = jessibuca.getControlBarShow()
 jessibuca.on("kBps", function (data) {
     console.log('kBps:', data)
     // 如果想要转换成网速
-    const speed = jessibuca.kbpsToSpeed(data);
+    const speed = jessibuca.kbps2Speed(data);
 })
 ```
 
@@ -939,7 +939,7 @@ jessibuca.on("error", function (error) {
 jessibuca.on("kBps", function (data) {
     console.log('kBps:', data)
     // 如果想要转换成网速
-    const speed = jessibuca.kbpsToSpeed(data);
+    const speed = jessibuca.kbps2Speed(data);
 })
 ```
 

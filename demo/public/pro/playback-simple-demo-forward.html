@@ -92,6 +92,11 @@
                     type="checkbox"
                     id="demuxUseWorker"
                 /><span>硬解码(Webcodec)worker解封装</span>
+                <input
+                    onclick="replay()"
+                    type="checkbox"
+                    id="isFlv"
+                /><span>是否flv格式</span>
             </div>
         </div>
         <div class="input">
@@ -134,6 +139,7 @@
     var $useWCS = document.getElementById('useWCS');
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
     var $demuxUseWorker = document.getElementById('demuxUseWorker');
+    var $isFlv = document.getElementById('isFlv');
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -201,6 +207,7 @@
             playbackCheckStreamEnd: false,
             demuxUseWorker: $demuxUseWorker.checked === true,
             demuxFlvUseV2: true,
+            isFlv: $isFlv.checked === true,
         },);
 
         $player.style.display = 'inline-block';
