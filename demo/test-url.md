@@ -114,13 +114,14 @@ https://flvplayer.js.org/assets/video/weathering-with-you.flv
 
 #### h265
 
-
 ##### 4k
 https://2dland.cn/test/test_video_h265.mp4
 
 ##### 720p
 https://ks3-cn-beijing.ksyun.com/ksplayer/h265/mp4_resource/jinjie_265.mp4
 
+##### 360p
+https://www.zzsin.com/h265webjs2/example/hevc_test_moov_set_head_16s.mp4
 
 #### h264
 

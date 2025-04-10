@@ -17,6 +17,12 @@
 
 > 播放器会报：“cannot find moov or mdat box” 错误
 
+检查下文件格式是否正确：目前遇到了海康的NVR录制的MP4文件，使用ffmpeg查看了一下，其实不是MP4格式的文件，文件头是MP4的，但是实际内容是PS格式的。用Mp4Box.js解析的时候会报错。
+
+
+```
+
+
 确认moov box 是否在mdat box之前
 
 > 其实就是按照fmp4格式封装就行了。
@@ -75,9 +81,14 @@ ffmpeg -i input.mp4 -vcodec copy -acodec copy -movflags faststart -y output.mp4
 
 检查下network 有没有报：`ERR_CONTENT_LENGTH_MISMATCH` 错误
 
+错误的返回格式：
 
-
+<img src="/public/img/range-error.png">
 
 解决方法：
 
 1. 服务器支持Range请求即可。
+
+正确的返回格式：
+
+<img src="/public/img/range-success.png">
