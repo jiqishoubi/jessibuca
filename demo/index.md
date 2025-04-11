@@ -83,6 +83,10 @@ features:
   details: 支持硬解码(MSE + WCS)和软解码(WASM + WASM(SIMD)) 播放
 - title: 支持国际化配置(Pro)
   details: 支持自定义国际化配置
+- title: 支持多个封装格式的流(点播文件)(Pro)
+  details: 支持PS/TS/FLV/HLS-TS/HLS-MP4/MP4/FMP4/Webrtc/裸流
+- title: 支持海康NVR视频播放(Pro)
+  details: 支持海康NVR视频播放
 - title: 更多
   details: 请到Pro文档页单独查看
 ---

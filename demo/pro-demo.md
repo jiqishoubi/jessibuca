@@ -225,6 +225,16 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-crypto-xor.html](http://jessibuca.monibuca.com/pro/play-vod-demo-crypto-xor.html)
 
+## 海康NVR点播文件(支持倍率播放，不支持seek)
+
+### demo
+------
+#### https
+[https://jessibuca.com/pro/playback-haikang-nvr.html](https://jessibuca.com/pro/playback-haikang-nvr.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/playback-haikang-nvr.html](http://jessibuca.monibuca.com/pro/playback-haikang-nvr.html)
+
 ## 音频直播流（支持移动端（平板端）息屏和后台播放）
 
 ### 音频播放器
@@ -339,6 +349,16 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 
 #### http
 [http://jessibuca.monibuca.com/pro/demo-ts.html](http://jessibuca.monibuca.com/pro/demo-ts.html)
+
+### PS格式(H264/H265)
+------
+#### https
+[https://jessibuca.com/pro/demo-ps.html](https://jessibuca.com/pro/demo-ps.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/demo-ps.html](http://jessibuca.monibuca.com/pro/demo-ps.html)
+
+
 
 
 ### Mpeg4格式(H264)

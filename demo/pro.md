@@ -72,8 +72,12 @@ jessibuca pro 是在开源版本的基础上额外支持的深入业务解决方
 | http-flv协议流(H264/H265)                                                                                                                                                                                                                                                           | 支持  | 支持  |
 | websocket-flv协议流(H264/H265)                                                                                                                                                                                                                                                      | 支持  | 支持  |
 | websocket-raw(M7S)协议流(H264/H265)                                                                                                                                                                                                                                                 | 支持  | 支持  |
-| Hls直播协议流(H264/H265+aac) m3u8+ts                                                                                                                                                                                                                                                  | 不支持 | 支持  |
-| Hls直播协议流(H264/H265+aac) m3u8+mp4                                                                                                                                                                                                                                                 | 不支持 | 支持  |
+| Hls直播协议流(H264/H265+aac/mp3/g711a/g711u) m3u8+ts                                                                                                                                                                                                                                  | 不支持 | 支持  |
+| Hls直播协议流(H264/H265+aac/mp3) m3u8+mp4                                                                                                                                                                                                                                             | 不支持 | 支持  |
+| http-mpeg-ts协议流(H264/H265)                                                                                                                                                                                                                                                       | 不支持 | 支持  |
+| ws-mpeg-ts协议流(H264/H265)                                                                                                                                                                                                                                                         | 不支持 | 支持  |
+| http-mpeg(ps)协议流(H264/H265)                                                                                                                                                                                                                                                      | 不支持 | 支持  |
+| ws-mpeg(ps)协议流(H264/H265)                                                                                                                                                                                                                                                            | 不支持 | 支持  |
 | WebTransport(M7S)协议流(H264/H265)                                                                                                                                                                                                                                                  | 不支持 | 支持  |
 | WebRTC协议流(H264)                                                                                                                                                                                                                                                                  | 不支持 | 支持  |
 | WebRTC协议流(H265) m7s 服务器                                                                                                                                                                                                                                                          | 不支持 | 支持  |
@@ -187,7 +191,7 @@ jessibuca pro 是在开源版本的基础上额外支持的深入业务解决方
 
 ## 直播协议支持(封装格式)
 
-支持19种直播格式
+支持20种直播格式
 
 | 协议                         | 支持情况 |
 |:---------------------------|:-----|
@@ -204,6 +208,7 @@ jessibuca pro 是在开源版本的基础上额外支持的深入业务解决方
 | http(s)-mpeg4              | 支持   |
 | ws(s)-mpeg4                | 支持   |
 | http(s)-mpeg-ts            | 支持   |
+| http(s)-mpeg(ps流)          | 支持   |
 | WebTransport(M7S服务器)       | 支持   |
 | Webrtc H264(M7S服务器)        | 支持   |
 | Webrtc H265(M7S服务器)        | 支持   |
