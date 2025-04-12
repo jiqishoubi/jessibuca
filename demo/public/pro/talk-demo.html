@@ -106,6 +106,13 @@
             </span>
         </div>
         <div class="input">
+            <span class="span-row">
+                单包时长(ms) <select id="frameDuration">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                    </select>
+            </span>
              <span class="span-row">
                     采样率
                     <select id="talkSampleRate">
@@ -195,6 +202,7 @@
     var $destroy = document.getElementById('destroy');
     var $debug = document.getElementById('debug');
     var $encodeWav = document.getElementById('encodeWav');
+    var $frameDuration = document.getElementById('frameDuration');
 
 
     var showOperateBtns = true; // 是否显示按钮
@@ -260,7 +268,8 @@
                 saveToTempFile: $debug.checked === true,
                 testMicrophone: testMicrophone,
                 jttSimNumber: document.getElementById('jttSimNumber').value,
-                jttChannelNumber: document.getElementById('jttChannelNumber').value
+                jttChannelNumber: document.getElementById('jttChannelNumber').value,
+                frameDuration: Number($frameDuration.value),
             }).then(() => {
 
             }).catch((e) => {
