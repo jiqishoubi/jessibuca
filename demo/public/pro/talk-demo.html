@@ -65,15 +65,16 @@
                     id="debug"
                     checked
                     type="checkbox"
-                /><span>debug模式(支持文件下载)</span>
+                /><span>debug模式(支持录制文件下载)</span>
             </div>
         </div>
+        <div style="color: red">tip:会将发送数据缓存在内存，不适合长时间测试，内存会一直涨</div>
         <div class="input">
               <span class="span-row">
                     封装格式
                     <select id="talkPacketType">
-                        <option value="rtp" selected>rtp</option>
-                        <option value="empty" >裸数据</option>
+                        <option value="rtp">rtp</option>
+                        <option value="empty" selected>裸数据</option>
                         <option value="jtt">jtt</option>
                     </select>
                 </span>
@@ -97,12 +98,11 @@
         <div class="input">
             <span class="span-row">
                 SIM 卡号
-                <input style="width: 200px" type="text" value="" placeholder="请输入12位SIM卡号"
-                       id="jttSimNumber">
+                <input style="width: 200px" type="text" value="" placeholder="请输入12位SIM卡号" id="jttSimNumber">
             </span>
             <span class="span-row">
                 通道号
-                <input style="width: 80px" type="text" value="" placeholder="请输入2位通道号" id="jttChannelNumber">
+                <input style="width: 110px" type="text" value="" placeholder="请输入2位通道号" id="jttChannelNumber">
             </span>
         </div>
         <div class="input">
@@ -111,6 +111,7 @@
                         <option value="10">10</option>
                         <option value="20" selected>20</option>
                         <option value="30">30</option>
+                        <option value="40">40</option>
                     </select>
             </span>
              <span class="span-row">
