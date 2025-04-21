@@ -50,21 +50,21 @@
         </div>
         <div class="input">
             <div><input
-                    type="checkbox"
-                    checked
-                    id="useMSE"
+                type="checkbox"
+                checked
+                id="useMSE"
             /><span>MediaSource</span>
                 <input
-                        type="checkbox"
-                        id="useWCS"
+                    type="checkbox"
+                    id="useWCS"
                 /><span>Webcodec</span>
                 <input
-                        type="checkbox"
-                        id="useWASM"
+                    type="checkbox"
+                    id="useWASM"
                 /><span>WASM</span>
                 <input
-                        type="checkbox"
-                        id="useSIMD"
+                    type="checkbox"
+                    id="useSIMD"
                 /><span>WASM(SIMD)</span> <span style="color: green">默认使用wasm解码器</span>
             </div>
         </div>
@@ -95,10 +95,10 @@
             <div>
 
                 <input
-                        checked
-                        onclick="replay()"
-                        type="checkbox"
-                        id="demuxUseWorker"
+                    checked
+                    onclick="replay()"
+                    type="checkbox"
+                    id="demuxUseWorker"
                 /><span>硬解码(MediaSource，Webcodec)worker解封装</span>
             </div>
         </div>
@@ -115,6 +115,11 @@
         </div>
         <div class="input">
             <div>
+                <span style="color: green">Tips:</span> webm(音频+视频)支持在chrome/edge浏览器中，显示时长，支持seek跳转，倍率播放。
+            </div>
+        </div>
+        <div class="input">
+            <div>
                 <input
                     onclick="replay()"
                     type="checkbox"
@@ -127,9 +132,9 @@
         <div class="input">
             <div>输入URL：</div>
             <input
-                    autocomplete="on"
-                    id="playUrl"
-                    value=""
+                autocomplete="on"
+                id="playUrl"
+                value=""
             />
             <button id="play">播放</button>
             <button id="pause" style="display: none">停止</button>
@@ -184,7 +189,7 @@
             showBandwidth: showOperateBtns, // 显示网速
             showPerformance: showOperateBtns, // 显示性能
             operateBtns: {
-                record:showOperateBtns,
+                record: showOperateBtns,
                 play: showOperateBtns,
                 audio: showOperateBtns,
                 performance: showOperateBtns,
@@ -209,6 +214,7 @@
             recordType: $recordType.value,
             // audioEngine:"worklet",
             isFlv: $isFlv.checked === true,
+            recordWebMSupportSeek: true,
         },);
 
         jessibuca.on(JessibucaPro.EVENTS.playFailedAndPaused, (error) => {
@@ -251,8 +257,7 @@
             $player.style.display = 'none';
             $pause.style.display = 'inline-block';
             $destroy.style.display = 'inline-block';
-        }
-        else{
+        } else {
             jessibuca.showErrorMessageTips('播放地址不能为空');
         }
     }
