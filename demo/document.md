@@ -2032,6 +2032,10 @@ https://developer.apple.com/documentation/uikit/uiwebview/1617960-allowsinlineme
 
 https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/1614793-allowsinlinemediaplayback
 
+### 关于播放路数超过16路之后，播放画面直接变成白色的问题。
+
+这是由于触发了WebGL的上限问题。
+
 ### 关于报“Too many active WebGL contexts. Oldest context will be lost” 错误
 
 这个错误是由于浏览器的限制导致的。
