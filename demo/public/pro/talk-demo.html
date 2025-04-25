@@ -80,7 +80,6 @@
                 </span>
 
         </div>
-        <div style="color: red">tip:(rtp传输协议、rtpSsrc)封装格式是rtp的时候才会生效</div>
         <div class="input">
             <span class="span-row">
                 rtp 传输协议
@@ -94,7 +93,7 @@
                 <input style="width: 80px" type="text" value="0" id="talkRtpSsrc">
             </span>
         </div>
-        <div style="color: red">tip:(SIM卡号、通道号)封装格式是jtt的时候才会生效</div>
+        <div style="color: red">tip:(rtp传输协议、rtpSsrc)封装格式是rtp的时候才会生效</div>
         <div class="input">
             <span class="span-row">
                 SIM 卡号
@@ -105,6 +104,7 @@
                 <input style="width: 110px" type="text" value="" placeholder="请输入2位通道号" id="jttChannelNumber">
             </span>
         </div>
+        <div style="color: red">tip:(SIM卡号、通道号)封装格式是jtt的时候才会生效</div>
         <div class="input">
             <span class="span-row">
                 单包时长(ms) <select id="frameDuration">
@@ -140,6 +140,24 @@
                         <option value="script" selected>script</option>
                     </select>
                 </span>
+        </div>
+        <div class="input">
+            <div>
+                <div>
+                    <input
+                        id="playAudio"
+                        type="checkbox"
+                    /><span>接收ws音频数据并播放</span>
+                </div>
+                <div>
+                    <span style="color: blue">支持pcm/g711a/g711u音频格式，仅支持裸数据格式封装。</span>
+                </div>
+                <div>
+                    <a href="https://github.com/bosscheng/jessibuca-pro-talk-websocket-test-server" target="_blank">websocket 测试demo</a>|
+                    <a href="/talk-doc.html" target="_blank">使用教程</a>
+                </div>
+            </div>
+
         </div>
         <div class="input">
             <button onclick="startTalk()">开始对讲</button>
@@ -204,6 +222,7 @@
     var $debug = document.getElementById('debug');
     var $encodeWav = document.getElementById('encodeWav');
     var $frameDuration = document.getElementById('frameDuration');
+    var $playAudio = document.getElementById('playAudio');
 
 
     var showOperateBtns = true; // 是否显示按钮
@@ -271,6 +290,15 @@
                 jttSimNumber: document.getElementById('jttSimNumber').value,
                 jttChannelNumber: document.getElementById('jttChannelNumber').value,
                 frameDuration: Number($frameDuration.value),
+                //  for play audio
+                playAudio: $playAudio.checked === true,
+                isG711a: talkEncType === 'g711a',
+                isG711u: talkEncType === 'g711u',
+                isPcm: talkEncType === 'pcm',
+                pcmConfig: {
+                    sampleRate: talkSampleRate,
+                    sampleBitsWidth: talkSampleBitsWidth,
+                }
             }).then(() => {
 
             }).catch((e) => {

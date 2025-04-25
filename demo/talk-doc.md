@@ -52,3 +52,33 @@
 #### 选择默认麦克风
 
 可以看： https://support.google.com/chrome/answer/2693767?hl=zh-Hans&co=GENIE.Platform%3DDesktop#zippy=
+
+
+
+## 播放音频数据
+
+> 配套websocket测试服务器
+
+首先下载测试服务器
+
+下载地址：[jessibuca-pro-talk-websocket-test-server](https://github.com/bosscheng/jessibuca-pro-talk-websocket-test-server)
+
+然后安装依赖
+```
+npm install
+```
+
+然后运行起来
+```
+node server.js
+```
+
+然后配置参数，允许接收websocket信息，并播放。
+
+支持 pcm/g711a/g711u 格式。
+
+> 注意封装格式需要选“裸数据”
+
+然后输入ws地址：`ws://localhost:8080/`，然后点击连接按钮。就可以测试了
+
+
