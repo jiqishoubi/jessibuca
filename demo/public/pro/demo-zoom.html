@@ -138,6 +138,12 @@
                     type="checkbox"
                     id="zoomSupportWheelInPc"
                 /><span>支持滚轴缩放(PC)</span>
+                <input
+                    checked
+                    onclick="replay()"
+                    type="checkbox"
+                    id="zoomCheckBorderRange"
+                /><span>支持边界检查(窗口拖动到边界就没法再拖动了)</span>
             </div>
         </div>
 
@@ -180,6 +186,7 @@
     var $zoomSupportWheelInPc = document.getElementById('zoomSupportWheelInPc');
     var $zoomMaxScale = document.getElementById('zoomMaxScale');
     var $zoomMaxScaleInput = document.getElementById('zoomMaxScaleInput');
+    var $zoomCheckBorderRange = document.getElementById('zoomCheckBorderRange');
 
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
@@ -228,8 +235,8 @@
             zoomSupportGestureInMobile:$zoomSupportGestureInMobile.checked === true,
             zoomSupportWheelInPc:$zoomSupportWheelInPc.checked === true,
             zoomMaxScale: Number($zoomMaxScale.value),
+            zoomCheckBorderRange: $zoomCheckBorderRange.checked === true,
         },);
-
 
         jessibuca.on('ptz', (arrow) => {
             // console.log('ptz', arrow);
