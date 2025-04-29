@@ -87,7 +87,7 @@
 	  webm: 'webm'
 	};
 	const CONTAINER_DATA_SET_KEY = 'jessibuca';
-	const VERSION = '"3.3.18"';
+	const VERSION = '"3.3.19"';
 
 	// default player options
 	const DEFAULT_PLAYER_OPTIONS = {
@@ -12104,6 +12104,9 @@
 
 	  // loading 等待时间
 	  checkLoadingTimeout() {
+	    const randomTime = parseFloat((Math.floor(Math.random() * 11) - 5) / 10);
+	    const newLoadingTimeout = this._opt.loadingTimeout + randomTime;
+	    this.debug.log('Player', `checkLoadingTimeout loadingTimeout is ${this._opt.loadingTimeout} and newLoadingTimeout is ${newLoadingTimeout}`);
 	    this._checkLoadingTimeout = setTimeout(() => {
 	      // check again
 	      if (this.playing) {
@@ -12116,7 +12119,7 @@
 	        this.emit(EVENTS.timeout, EVENTS.loadingTimeout);
 	        this.emit(EVENTS.loadingTimeout);
 	      });
-	    }, this._opt.loadingTimeout * 1000);
+	    }, newLoadingTimeout * 1000);
 	  }
 	  clearCheckLoadingTimeout() {
 	    if (this._checkLoadingTimeout) {

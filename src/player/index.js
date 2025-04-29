@@ -766,6 +766,9 @@ export default class Player extends Emitter {
 
     // loading 等待时间
     checkLoadingTimeout() {
+        const randomTime = parseFloat((Math.floor(Math.random() * 11) - 5) / 10);
+        const newLoadingTimeout = (this._opt.loadingTimeout + randomTime);
+        this.debug.log('Player', `checkLoadingTimeout loadingTimeout is ${this._opt.loadingTimeout} and newLoadingTimeout is ${newLoadingTimeout}`);
         this._checkLoadingTimeout = setTimeout(() => {
             // check again
             if (this.playing) {
@@ -778,7 +781,7 @@ export default class Player extends Emitter {
                 this.emit(EVENTS.timeout, EVENTS.loadingTimeout);
                 this.emit(EVENTS.loadingTimeout);
             });
-        }, this._opt.loadingTimeout * 1000)
+        }, newLoadingTimeout * 1000)
     }
 
     clearCheckLoadingTimeout() {
