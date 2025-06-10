@@ -29,15 +29,15 @@ export default class WebsocketLoader extends Emitter {
         this.player.debug.log('websocketLoader', 'destroy');
     }
 
-    _createWebSocket() {
+    _createWebSocket(options = {}) {
         const player = this.player;
         const {
             debug,
             events: {proxy},
             demux,
         } = player;
-
-        this.socket = new WebSocket(this.wsUrl);
+        const protocols = options.protocols || [];
+        this.socket = new WebSocket(this.wsUrl, protocols);
         this.socket.binaryType = 'arraybuffer';
         proxy(this.socket, 'open', () => {
             this.emit(EVENTS.streamSuccess);
@@ -86,7 +86,7 @@ export default class WebsocketLoader extends Emitter {
     fetchStream(url, options) {
         this.player._times.streamStart = now();
         this.wsUrl = url;
-        this._createWebSocket();
+        this._createWebSocket(options);
     }
 
 
