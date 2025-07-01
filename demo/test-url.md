@@ -71,6 +71,9 @@ https://live.nodemedia.cn:8443/live/sony_4k_264.flv
 
 > 需要通过本地local域名访问，公网会校验域名
 
+##### 七牛云 1080p
+
+https://live-mikudemo.cloudvdn.com/mikudemo/timestamps.m3u8
 
 #### H265
 

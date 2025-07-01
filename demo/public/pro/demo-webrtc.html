@@ -71,14 +71,23 @@
                 </div>
             </div>
         </div>
-
+        <div class="input" style="border-bottom: 1px solid">
+            <div>
+                <input
+                    type="checkbox"
+                    id="isWebrtcForQiNiu"
+                /><span>强制七牛云服务器</span>
+                <span>七牛云服务器：</span><span style="color: green">webrtc://xxx.xxx.xxx.xxx/xxxxxx</span> <br>
+                播放器是不会根据url上面的路径来检测的的。
+            </div>
+        </div>
         <div class="input" style="border-bottom: 1px solid">
             <div>
                 <input
                     type="checkbox"
                     id="isForOthers"
                 /><span>强制其他Webrtc服务器</span>
-                <span>其他的webrtc地址：</span><span style="color: green">webrtc://127.0.0.1/test/sdp</span> <br>
+                <span>其他的webrtc地址：</span><span style="color: green">webrtc://xxx.xxx.xxx.xxx/test/sdp</span> <br>
                 播放器是不会根据url上面的路径来检测的的。
             </div>
         </div>
@@ -111,6 +120,7 @@
     var $webrtcForSRSBySDK = document.getElementById('webrtcForSRSBySDK');
     var $webrtcForSRSByWhipWhep = document.getElementById('webrtcForSRSByWhipWhep');
     var $isWebrtcForZLM = document.getElementById('isWebrtcForZLM');
+    var $isWebrtcForQiNiu = document.getElementById('isWebrtcForQiNiu');
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -143,11 +153,12 @@
             useMSE: true,
             useWCS: true,
             isWebrtcForOthers: $isForOthers.checked === true,
+            isWebrtcForZLM: $isWebrtcForZLM.checked === true,
             isEmitSEI: true,
             isWebrtcForSRS: $isWebrtcForSRS.checked === true,
-            isWebrtcForZLM: $isWebrtcForZLM.checked === true,
             webrtcForSRSBySDK: $webrtcForSRSBySDK.checked === true,
             webrtcForSRSByWhipWhep: $webrtcForSRSByWhipWhep.checked === true,
+            isWebrtcForQiNiu: $isWebrtcForQiNiu.checked === true,
             // videoRenderType:'canvas'
         },);
 
