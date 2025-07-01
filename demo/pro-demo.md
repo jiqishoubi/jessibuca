@@ -424,7 +424,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [http://jessibuca.monibuca.com/pro/demo-hls-H265.html](http://jessibuca.monibuca.com/pro/demo-hls-H265.html)
 
 
-### webrtc（m7s支持H264/H265、ZLM支持H264、SRS支持H264、其他流媒体支持H264）
+### webrtc（m7s支持H264/H265、ZLM支持H264、SRS支持H264、七牛云支持H264、其他流媒体支持H264）
 ------
 #### https
 [https://jessibuca.com/pro/demo-webrtc.html](https://jessibuca.com/pro/demo-webrtc.html)
