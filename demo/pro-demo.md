@@ -612,19 +612,28 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 ### 人脸识别
 ------
 #### https
-[https://jessibuca.com/pro/face-detector-demo.html](https://jessibuca.com/pro/face-detector-demo.html)
+[https://jessibuca.com/pro/demo-ai-face-detector.html](https://jessibuca.com/pro/demo-ai-face-detector.html)
 
 #### http
-[http://jessibuca.monibuca.com/pro/face-detector-demo.html](http://jessibuca.monibuca.com/pro/face-detector-demo.html)
+[http://jessibuca.monibuca.com/pro/demo-ai-face-detector.html](http://jessibuca.monibuca.com/pro/demo-ai-face-detector.html)
 
 
 ### 物品识别（人、车辆等）
 ------
 #### https
-[https://jessibuca.com/pro/object-detector-demo.html](https://jessibuca.com/pro/object-detector-demo.html)
+[https://jessibuca.com/pro/demo-ai-object-detector.html](https://jessibuca.com/pro/demo-ai-object-detector.html)
 
 #### http
-[http://jessibuca.monibuca.com/pro/object-detector-demo.html](http://jessibuca.monibuca.com/pro/object-detector-demo.html)
+[http://jessibuca.monibuca.com/pro/demo-ai-object-detector.html](http://jessibuca.monibuca.com/pro/demo-ai-object-detector.html)
+
+### 物品识别（人物识别）
+------
+#### https
+[https://jessibuca.com/pro/demo-ai-person-detector.html](https://jessibuca.com/pro/demo-ai-person-detector.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/demo-ai-person-detector.html](http://jessibuca.monibuca.com/pro/demo-ai-person-detector.html)
+
 
 ### 黑屏、绿屏、花屏、马赛克检查
 ------

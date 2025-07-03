@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Jessica demo</title>
+    <meta http-equiv="origin-trial"
+          content="AjU8lA9nUt9ly2bNwJ2ZZQfka1hePBYt56dwHgHEj9Un84AtzB+xrr9wr2Qf2PnVV2ilepcDU+f+EQa5qBHbawgAAABheyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjYzMzQyIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNzUzMTQyNDAwfQ==">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="./demo.css">
     <script src="./vconsole.js"></script>
     <script>
@@ -20,6 +23,63 @@
 <div class="root">
     <div class="container-shell">
         <div id="container"></div>
+        <div class="input">
+            <div>
+                当前浏览器：
+                <span id="wcsSupport264" style="color: green;display: none">支持Webcodecs H264解码；</span>
+                <span id="wcsSupport" style="color: green;display: none">支持Webcodecs H265解码（不一定准确）；</span>
+                <span id="wcsNotSupport264"
+                      style="color: red;display: none">不支持Webcodecs H264解码(https/localhost)；</span>
+                <span id="wcsNotSupport" style="color: red;display: none">不支持Webcodecs H265解码(https/localhost),会自动切换成wasm解码</span>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                当前浏览器：
+                <span id="wasmSupport" style="color: green;display: none">支持WASM解码；</span>
+                <span id="simdSupport" style="color: green;display: none">支持WASM SIMD解码；</span>
+                <span id="simdMtSupport" style="color: green;display: none">支持WASM WASM(SIMD) 多线程解码；</span>
+                <span id="wasmNotSupport" style="color: red;display: none">不支持WASM解码；</span>
+                <span id="simdNotSupport"
+                      style="color: red;display: none">不支持WASM SIMD解码,会自动切换成wasm解码；</span>
+                <span id="simdMtNotSupport" style="color: red;display: none">不支持WASM WASM(SIMD) 多线程解码；</span>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                <div>
+                    <span>硬解码：</span>
+                    <input
+                        type="checkbox"
+                        id="useWCS"
+                    /><span>Webcodec</span>
+                </div>
+                <div>
+                    <span>软解码：</span>
+                    <input
+                        checked
+                        type="checkbox"
+                        id="useWASM"
+                    /><span>WASM</span>
+                    <input
+                        type="checkbox"
+                        id="useSIMD"
+                    /><span>WASM(SIMD)</span>
+                    <input
+                        type="checkbox" ,
+                        id="isFFmpegSIMD"
+                        onclick="replay()"
+                    /><span>isSIMD(V2)</span>
+                    <input
+                        type="checkbox"
+                        checked
+                        id="useSIMDMThreading"
+                        onclick="replay()"
+                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    <span style="color: green">默认使用wasm解码器</span>
+                </div>
+            </div>
+        </div>
         <div class="input">
             tip：支持回调ai识别出来的数据，流ts时间戳，x,y 坐标系，width，height 宽高。(F12 控制台可以看到)
         </div>
@@ -88,6 +148,7 @@
         </div>
     </div>
 </div>
+<script src="./demo.js"></script>
 
 <script>
     var $player = document.getElementById('play');
@@ -101,6 +162,11 @@
     var $borderWidth = document.getElementById('borderWidth');
     var $borderColor = document.getElementById('borderColor');
     var $aiFaceDetectEmitBase64 = document.getElementById('aiFaceDetectEmitBase64');
+    var $useWCS = document.getElementById('useWCS');
+    var $useSIMD = document.getElementById('useSIMD');
+    var $useWASM = document.getElementById('useWASM');
+    var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
+    var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
 
 
     var showOperateBtns = true; // 是否显示按钮
@@ -119,8 +185,11 @@
             loadingText: "加载中",
             debug: true,
             useMSE: false,
-            useWCS: false,
-            useSIMD: true,
+            useWCS: $useWCS.checked === true,
+            useSIMD: $useSIMD.checked === true,
+            isFFmpegSIMD: $isFFmpegSIMD.checked === true,
+            useMThreading: $useSIMDMThreading.checked === true,
+            videoRenderType:'canvas',
             showBandwidth: showOperateBtns, // 显示网速
             showPerformance: showOperateBtns, // 显示性能
             operateBtns: {
@@ -231,6 +300,35 @@
         }
 
     })
+
+
+    $useSIMD.addEventListener('click', function () {
+        const checked = $useSIMD.checked;
+        if (checked) {
+            $useWCS.checked = false
+            $useWASM.checked = false
+        }
+        replay();
+    })
+
+    $useWCS.addEventListener('click', function () {
+        const checked = $useWCS.checked;
+        if (checked) {
+            $useSIMD.checked = false
+            $useWASM.checked = false
+        }
+        replay();
+    })
+
+    $useWASM.addEventListener('click', function () {
+        const checked = $useWASM.checked;
+        if (checked) {
+            $useSIMD.checked = false
+            $useWCS.checked = false
+        }
+        replay();
+    })
+
 
 </script>
 
