@@ -216,7 +216,9 @@
         if (isPlayVodPause) {
             jessibuca.playVodResume()
         } else {
-            jessibuca.playVod(href).catch((error) => {
+            jessibuca.playVod(href).then(() => {
+                notifySuccess('播放成功');
+            }).catch((error) => {
                 jessibuca.showErrorMessageTips(error.toString());
             });
         }

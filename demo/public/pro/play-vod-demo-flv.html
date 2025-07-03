@@ -268,7 +268,9 @@
         if (isPlaybackPause) {
             jessibuca.playbackResume()
         } else {
-            jessibuca.playback(href).catch((e) => {
+            jessibuca.playback(href).then(() => {
+                notifySuccess('播放成功');
+            }).catch((e) => {
                 jessibuca.showErrorMessageTips('播放异常：' + e);
             });
         }

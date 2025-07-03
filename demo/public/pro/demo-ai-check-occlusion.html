@@ -56,6 +56,71 @@
         </div>
         <div class="input">
             <div>
+                <div>
+                    <span>硬解码：</span>
+                    <input
+                        type="checkbox"
+                        id="useWCS"
+                    /><span>Webcodec</span>
+                    <span> | </span>
+                    <input
+                        checked
+                        onchange="replay()"
+                        type="checkbox"
+                        id="audioDecodeUseHardware"
+                    />
+                    <span>硬解码音频</span>
+                </div>
+                <div>
+                    <span>软解码：</span>
+                    <input
+                        checked
+                        type="checkbox"
+                        id="useWASM"
+                    /><span>WASM</span>
+                    <input
+                        type="checkbox"
+                        id="useSIMD"
+                    /><span>WASM(SIMD)</span>
+                    <input
+                        type="checkbox" ,
+                        id="isFFmpegSIMD"
+                        onclick="replay()"
+                    /><span>isSIMD(V2)</span>
+                    <span id="useSIMDMThreadingWrap">
+                        <input
+                            type="checkbox"
+                            checked
+                            id="useSIMDMThreading"
+                            onclick="replay()"
+                        /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    </span>
+
+                    <span style="color: green">默认使用wasm解码器</span>
+                </div>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                <span>渲染标签：</span>
+                <select id="renderDom" onchange="replay()">
+                    <option value="video" selected>video</option>
+                    <option value="canvas">canvas</option>
+
+                </select>
+
+                <span>canvas渲染技术：</span>
+                <select id="isUseWebGPU" onchange="replay()">
+                    <option value="webgl" selected>webgl</option>
+                    <option value="webgpu">webgpu</option>
+                    <option value="canvas">canvas</option>
+                </select>
+                <span id="supportWebgpu"></span>
+            </div>
+        </div>
+
+        <div class="input">
+            <div>
                 <span>缓存时长：</span>
                 <input placeholder="单位：秒" type="text" id="videoBuffer" style="width: 50px" value="0.2">秒
                 <span>缓存延迟(延迟超过会触发丢帧)：</span>
@@ -78,6 +143,15 @@
                 <span>AI遮挡检测间隔时间(单位：秒)：</span>
                 <input type="text" style="width: 100px" id="intervalTime" value="0.5">
                 <button onclick="replay()">重播</button>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                <input
+                    onclick="replay()"
+                    type="checkbox"
+                    id="isFlv"
+                /><span>强制识别成flv <span style="color: red">(播放路径path不是以.flv结尾的，建议勾选上)</span> </span>
             </div>
         </div>
 
@@ -115,6 +189,15 @@
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
+    var $isFlv = document.getElementById('isFlv');
+    var $useWCS = document.getElementById('useWCS');
+    var $useSIMD = document.getElementById('useSIMD');
+    var $useWASM = document.getElementById('useWASM');
+    var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
+    var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
+    var $audioDecodeUseHardware = document.getElementById('audioDecodeUseHardware');
+    var $renderDom = document.getElementById('renderDom');
+    var $isUseWebGPU = document.getElementById('isUseWebGPU');
 
     function create() {
         jessibuca = new JessibucaPro({
@@ -128,8 +211,12 @@
             debug: true,
             debugLevel: "debug",
             useMSE: false,
-            useWCS: false,
-            useSIMD: true,
+            useWCS: $useWCS.checked === true,
+            useSIMD: $useSIMD.checked === true,
+            isFFmpegSIMD: $isFFmpegSIMD.checked === true,
+            useMThreading: $useSIMDMThreading.checked === true,
+            isFlv: $isFlv.checked === true,
+            wcsDecodeAudio: $audioDecodeUseHardware.checked === true,
             showBandwidth: showOperateBtns, // 显示网速
             showPerformance: showOperateBtns, // 显示性能
             operateBtns: {
@@ -137,23 +224,16 @@
                 screenshot: showOperateBtns,
                 play: showOperateBtns,
                 audio: showOperateBtns,
-                ptz: showOperateBtns,
-                quality: showOperateBtns,
                 performance: showOperateBtns,
                 aiOcclusion: showOperateBtns
             },
+            useCanvasRender: $renderDom.value === 'canvas',
+            useWebGPU: $isUseWebGPU.value === 'webgpu',
+            useWebCanvas: $isUseWebGPU.value === 'canvas',
             timeout: 10000,
             heartTimeoutReplayUseLastFrameShow: true,
-            audioEngine: "worklet",
-            qualityConfig: ['普清', '高清', '超清', '4K', '8K'],
-            forceNoOffscreen: forceNoOffscreen,
             isNotMute: false,
             heartTimeout: 10,
-            ptzClickType: 'mouseDownAndUp',
-            ptzZoomShow: true,
-            ptzMoreArrowShow: true,
-            ptzApertureShow: true,
-            ptzFocusShow: true,
             demuxUseWorker: $demuxUseWorker.checked === true,
             controlHtml: '<div>我是 <span style="color: red">test</span>文案</div>',
             // audioEngine:"worklet",
@@ -165,6 +245,7 @@
 
         jessibuca.on(JessibucaPro.EVENTS.aiOcclusionDetectResult, (result) => {
             console.log('aiOcclusionDetectResult', result);
+            notifySuccess(`被遮挡：ts ${result.ts}`);
         })
 
         jessibuca.on(JessibucaPro.EVENTS.playFailedAndPaused, (error) => {
@@ -193,12 +274,16 @@
     function play() {
         var href = $playHref.value;
         if (href) {
-            jessibuca.play(href).catch((error) => {
+            jessibuca.play(href).then(()=>{
+                console.log('play success');
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+                notifySuccess('播放成功');
+            }).catch((error)=>{
                 jessibuca.showErrorMessageTips(error.toString());
             });
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
+
         } else {
             jessibuca.showErrorMessageTips('播放地址不能为空');
         }
@@ -243,6 +328,34 @@
         }
 
     })
+
+    $useSIMD.addEventListener('click', function () {
+        const checked = $useSIMD.checked;
+        if (checked) {
+            $useWCS.checked = false
+            $useWASM.checked = false
+        }
+        replay();
+    })
+
+    $useWCS.addEventListener('click', function () {
+        const checked = $useWCS.checked;
+        if (checked) {
+            $useSIMD.checked = false
+            $useWASM.checked = false
+        }
+        replay();
+    })
+
+    $useWASM.addEventListener('click', function () {
+        const checked = $useWASM.checked;
+        if (checked) {
+            $useSIMD.checked = false
+            $useWCS.checked = false
+        }
+        replay();
+    })
+
 </script>
 
 </body>

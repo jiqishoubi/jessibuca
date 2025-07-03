@@ -26,6 +26,16 @@
         <div class="input">
             <div>
                 当前浏览器：
+                <span id="mseSupport264" style="color: green;display: none">支持MSE H264解码；</span>
+                <span id="mseSupport" style="color: green;display: none">支持MSE H265解码；</span>
+                <span id="mseNotSupport264" style="color: red;display: none">不支持MSE H264解码；</span>
+                <span id="mseNotSupport"
+                      style="color: red;display: none">不支持MSE H265解码,会自动切换成wasm解码；</span>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                当前浏览器：
                 <span id="wcsSupport264" style="color: green;display: none">支持Webcodecs H264解码；</span>
                 <span id="wcsSupport" style="color: green;display: none">支持Webcodecs H265解码（不一定准确）；</span>
                 <span id="wcsNotSupport264"
@@ -53,6 +63,14 @@
                         type="checkbox"
                         id="useWCS"
                     /><span>Webcodec</span>
+                    <span> | </span>
+                    <input
+                        checked
+                        onchange="replay()"
+                        type="checkbox"
+                        id="audioDecodeUseHardware"
+                    />
+                    <span>硬解码音频</span>
                 </div>
                 <div>
                     <span>软解码：</span>
@@ -70,17 +88,37 @@
                         id="isFFmpegSIMD"
                         onclick="replay()"
                     /><span>isSIMD(V2)</span>
-                    <input
-                        type="checkbox"
-                        checked
-                        id="useSIMDMThreading"
-                        onclick="replay()"
-                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    <span id="useSIMDMThreadingWrap">
+                        <input
+                            type="checkbox"
+                            checked
+                            id="useSIMDMThreading"
+                            onclick="replay()"
+                        /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
+                    </span>
+
                     <span style="color: green">默认使用wasm解码器</span>
                 </div>
             </div>
         </div>
+        <div class="input">
+            <div>
+                <span>渲染标签：</span>
+                <select id="renderDom" onchange="replay()">
+                    <option value="video" selected>video</option>
+                    <option value="canvas">canvas</option>
 
+                </select>
+
+                <span>canvas渲染技术：</span>
+                <select id="isUseWebGPU" onchange="replay()">
+                    <option value="webgl" selected>webgl</option>
+                    <option value="webgpu">webgpu</option>
+                    <option value="canvas">canvas</option>
+                </select>
+                <span id="supportWebgpu"></span>
+            </div>
+        </div>
         <div class="input">
             tip：支持回调ai识别出来的数据，数据格式：className：物体名称(en),<br>
             confidence:相似度，box：区域（width,heigh,x,y）
@@ -90,6 +128,19 @@
         </div>
         <div class="input">
             <span style="color: green">tip: 物品识别默认关闭：需要在底部控制条上面手动开启物品识别检测</span>
+        </div>
+        <div class="input">
+            <div>
+                <span style="color: red">识别对象：</span>
+                <select name="" id="aiObjectDetectTarget" style="width: 300px">
+                    <option value="">all</option>
+                    <option value="person">人</option>
+                    <option value="bicycle,car,motorbike,aeroplane,bus,train,truck,boat">自行车/汽车/摩托车/飞机/船</option>
+                    <option value="traffic light,fire hydrant,stop sign,parking meter">交通灯/消防栓/停止标志/停车收费表</option>
+                    <option value="bird,cat,dog,horse,sheep,cow,elephant,bear,zebra,giraffe">鸟/猫/狗/马/绵羊/牛/大象/熊/斑马/长颈鹿</option>
+                </select>
+            </div>
+
         </div>
         <div class="input">
             <span>是否显示识别框子</span>
@@ -181,7 +232,10 @@
     var $useWASM = document.getElementById('useWASM');
     var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
-
+    var $audioDecodeUseHardware = document.getElementById('audioDecodeUseHardware');
+    var $renderDom = document.getElementById('renderDom');
+    var $isUseWebGPU = document.getElementById('isUseWebGPU');
+    var $aiObjectDetectTarget = document.getElementById('aiObjectDetectTarget');
 
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
@@ -189,6 +243,7 @@
     var currentIndex = 1;
     function create() {
         clearImage();
+        let aiObjectDetectTarget = ($aiObjectDetectTarget.value||'').split(',');
         jessibuca = new JessibucaPro({
             container: $container,
             videoBuffer: 1, // 缓存时长
@@ -198,25 +253,25 @@
             loadingText: "加载中",
             debug: true,
             useMSE: false,
+            aiObjectDetectTarget: aiObjectDetectTarget,
             useWCS: $useWCS.checked === true,
             useSIMD: $useSIMD.checked === true,
             isFFmpegSIMD: $isFFmpegSIMD.checked === true,
             useMThreading: $useSIMDMThreading.checked === true,
-            videoRenderType:'canvas',
+            wcsDecodeAudio:$audioDecodeUseHardware.checked === true,
             showBandwidth: showOperateBtns, // 显示网速
             showPerformance: showOperateBtns, // 显示性能
             operateBtns: {
                 fullscreen: showOperateBtns,
                 play: showOperateBtns,
                 audio: showOperateBtns,
-                performance: showOperateBtns,
                 aiObject: showOperateBtns,
             },
-            audioEngine: "worklet",
-            forceNoOffscreen: forceNoOffscreen,
+            useCanvasRender: $renderDom.value === 'canvas',
+            useWebGPU: $isUseWebGPU.value === 'webgpu',
+            useWebCanvas: $isUseWebGPU.value === 'canvas',
             isNotMute: false,
             heartTimeout: 10,
-
             useObjectDetector: true,
             aiObjectDetectShowRect: $aiObjectDetectShowRect.checked,
             aiObjectDetectInterval: Number($intervalTime.value),
@@ -272,12 +327,14 @@
     function play() {
         var href = $playHref.value;
         if (href) {
-            jessibuca.play(href).catch((error) => {
+            jessibuca.play(href).then(() => {
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+                notifySuccess('播放成功');
+            }).catch((error) => {
                 jessibuca.showErrorMessageTips(error.toString());
             });
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
         }
         else{
             jessibuca.showErrorMessageTips('播放地址不能为空');

@@ -255,12 +255,14 @@
     function play() {
         var href = $playHref.value;
         if (href) {
-            jessibuca.play(href).catch((error) => {
+            jessibuca.play(href).then(() => {
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+                notifySuccess('播放成功');
+            }).catch((error) => {
                 jessibuca.showErrorMessageTips(error.toString());
             });
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
         }
     }
 

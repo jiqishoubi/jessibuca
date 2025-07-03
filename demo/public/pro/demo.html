@@ -113,6 +113,7 @@
                 <select id="isUseWebGPU" onchange="replay()">
                     <option value="webgl" selected>webgl</option>
                     <option value="webgpu">webgpu</option>
+                    <option value="canvas">canvas</option>
                 </select>
                 <span id="supportWebgpu"></span>
             </div>
@@ -252,13 +253,9 @@
             forceNoOffscreen: forceNoOffscreen,
             isNotMute: false,
             heartTimeout: 10,
-            ptzClickType: 'mouseDownAndUp',
-            ptzZoomShow: true,
-            ptzMoreArrowShow: true,
-            ptzApertureShow: true,
-            ptzFocusShow: true,
             useCanvasRender: $renderDom.value === 'canvas',
             useWebGPU: $isUseWebGPU.value === 'webgpu',
+            useWebCanvas: $isUseWebGPU.value === 'canvas',
             demuxUseWorker: $demuxUseWorker.checked === true,
             controlHtml: '<div>我是 <span style="color: red">test</span>文案</div>',
             // audioEngine:"worklet",
@@ -302,6 +299,7 @@
                 $player.style.display = 'none';
                 $pause.style.display = 'inline-block';
                 $destroy.style.display = 'inline-block';
+                notifySuccess('播放成功');
             }).catch((error)=>{
                 jessibuca.showErrorMessageTips(error.toString());
             });

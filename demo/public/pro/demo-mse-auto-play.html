@@ -133,7 +133,12 @@
     create();
 
     function play() {
-        jessibuca.play('https://live.nodemedia.cn:8443/live/b480_264.flv');
+        jessibuca.play('https://live.nodemedia.cn:8443/live/b480_264.flv').then(() => {
+            notifySuccess('播放成功');
+        }).catch((error) => {
+            console.error('play error:', error);
+            jessibuca.showErrorMessageTips('播放异常：' + error);
+        });
     }
 
     play();

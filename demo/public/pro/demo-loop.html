@@ -279,13 +279,15 @@
         const href = playList[index++ % playList.length];
 
         if (href) {
-            jessibuca.play(href).catch((error) => {
+            jessibuca.play(href).then(() => {
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+                notifySuccess('播放成功');
+                startLoop();
+            }).catch((error) => {
                 jessibuca.showErrorMessageTips(error.toString());
             });
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
-            startLoop();
         }
         else{
             jessibuca.showErrorMessageTips('播放地址不能为空');

@@ -329,6 +329,7 @@
             demuxUseWorker: $demuxUseWorker.checked === true,
             controlHtml: '<div>我是 <span style="color: red">test</span>文案</div>',
             websocket1006ErrorReplay: $websocket1006ErrorReplay.checked === true,
+            websocket1006ErrorReplayDelayTime: 5,//
             streamErrorReplay: $streamErrorReplay.checked === true,
             streamEndReplay: $streamEndReplay.checked === true,
             streamErrorReplayDelayTime: 5, // 延迟1s去触发播放。
@@ -380,13 +381,13 @@
         var href = $playHref.value;
         if (href) {
             jessibuca.play(href).then(() => {
-                console.log('play success')
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+                notifySuccess('播放成功');
             }).catch((error) => {
-                // ignore error
+                jessibuca.showErrorMessageTips(error.toString());
             });
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
         } else {
             jessibuca.showErrorMessageTips('播放地址不能为空');
         }

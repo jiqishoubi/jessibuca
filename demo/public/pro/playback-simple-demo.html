@@ -357,6 +357,7 @@
             jessibuca.playbackResume()
         } else {
             jessibuca.playback(href).then(() => {
+                notifySuccess('播放成功');
 
             }).catch((error) => {
                 jessibuca.showErrorMessageTips('播放异常：' + error);

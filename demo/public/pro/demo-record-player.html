@@ -60,6 +60,7 @@
         </div>
     </div>
 </div>
+<script src="./demo.js"></script>
 <script>
     window.JESSIBUCA_PRO_MP4_RECORDER_WASM_URL='./js/jessibuca-pro-mp4-recorder-decoder.wasm'
 </script>
@@ -107,10 +108,13 @@
         var href = $playHref.value;
         if (href) {
             $recordHtml.innerHTML = '';
-            jessibucaRecorder.startRecord(href);
-            $player.style.display = 'none';
-            $pause.style.display = 'inline-block';
-            $destroy.style.display = 'inline-block';
+            jessibucaRecorder.startRecord(href).then(()=>{
+                $player.style.display = 'none';
+                $pause.style.display = 'inline-block';
+                $destroy.style.display = 'inline-block';
+                notifySuccess('开始录制');
+            });
+
         }
     }
 
