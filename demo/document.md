@@ -3193,6 +3193,50 @@ const jessibuca = new JessibucaPro({
 
 如果需要修改浏览器的兼容性，可以直接修改`browserslist`配置就行了。
 
+
+### 如何设置chrome浏览器优先使用独立显卡的硬件解码器
+
+> 默认情况下 Chrome 更倾向于使用集成显卡（如 Intel HD/UHD Graphics）来做视频解码任务，而不是独立显卡（如 NVIDIA 或 AMD）。即使你的系统有独显，Chrome 也通常不会主动使用它来做视频解码，除非特定条件满足或者你强制设置。
+
+
+#### 方式一：Windows 系统层面设置默认 GPU
+1. 打开设置 → 系统 → 显示 → 图形设置
+2. 选择“浏览” → 添加 chrome.exe（比如 C:\Program Files\Google\Chrome\Application\chrome.exe）
+3. 点击“选项”，选择“高性能”（通常是独立显卡），保存
+
+> ⚠️ 注意：这只能控制 Chrome 的整体渲染和 GPU 使用，不一定能让视频解码器也切换到独显，因为视频解码仍依赖系统硬件解码能力 + 驱动。
+
+#### 方式二：Chrome 启动参数添加强制 GPU 设置
+
+```shell
+--use-gl=desktop --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist
+```
+
+适用于 Windows 和 Linux，其中：
+
+- --use-gl=desktop：使用系统级的 OpenGL，而非 ANGLE（兼容层）
+- --ignore-gpu-blocklist：忽略 Chrome 的硬件黑名单
+- --enable-features=VaapiVideoDecoder：强制启用 VA-API（通常 Linux 更有效）
+
+#### 方式三：用 chrome://flags 控制
+在地址栏输入 chrome://flags，尝试打开以下 flag（取决于系统）：
+
+- Hardware-accelerated video decode
+- Override software rendering list
+
+
+#### 验证是否使用了独立显卡解码
+
+1. 在 Chrome 地址栏打开 chrome://media-internals
+  - 播放视频时刷新页面，查看 video_decoder_name，比如是 VpxVideoDecoder/ffmpeg（软件）还是硬件的（如 D3D11VideoDecoder）
+
+2. 查看 chrome://gpu 页面
+  - 重点看 Video Decode 项是否为 Hardware accelerated
+
+3. 使用 GPU 监视工具（如 NVIDIA 控制面板 / GPU-Z / MSI Afterburner）看独显是否在解码视频时工作
+
+
+
 ## 支持作者
 
 ### 第一作者
