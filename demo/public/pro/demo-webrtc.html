@@ -91,6 +91,15 @@
                 播放器是不会根据url上面的路径来检测的的。
             </div>
         </div>
+        <div class="input" style="border-bottom: 1px solid">
+            <div>
+                <input
+                    checked
+                    type="checkbox"
+                    id="checkWebrtcLowFps"
+                /><span>是否检测低FPS，触发重播逻辑(在5s内平均FPS低于3)</span>
+            </div>
+        </div>
         <div class="input">
             <div>输入URL：</div>
             <input
@@ -121,6 +130,7 @@
     var $webrtcForSRSByWhipWhep = document.getElementById('webrtcForSRSByWhipWhep');
     var $isWebrtcForZLM = document.getElementById('isWebrtcForZLM');
     var $isWebrtcForQiNiu = document.getElementById('isWebrtcForQiNiu');
+    var $checkWebrtcLowFps = document.getElementById('checkWebrtcLowFps');
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -159,6 +169,7 @@
             webrtcForSRSBySDK: $webrtcForSRSBySDK.checked === true,
             webrtcForSRSByWhipWhep: $webrtcForSRSByWhipWhep.checked === true,
             isWebrtcForQiNiu: $isWebrtcForQiNiu.checked === true,
+            checkWebrtcLowFps: $checkWebrtcLowFps.checked === true,
             // videoRenderType:'canvas'
         },);
 

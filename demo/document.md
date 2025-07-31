@@ -3236,6 +3236,22 @@ const jessibuca = new JessibucaPro({
 3. 使用 GPU 监视工具（如 NVIDIA 控制面板 / GPU-Z / MSI Afterburner）看独显是否在解码视频时工作
 
 
+### 如何清除浏览器缓存（以chrome为例）
+
+#### 通过f12的devtool配置禁用缓存
+
+在F12打开控制台 -> 切换到 Network 选项卡 -> 勾选 Disable cache 选项。
+
+<img src="/public/img/disable-cache.png">
+
+然后刷新页面即可。
+
+#### 通过设置里面清除缓存
+
+在浏览器的设置里面，找到隐私和安全 -> 清除浏览数据
+
+<img src="/public/img/disable-cache2.png">
+
 
 ## 支持作者
 
