@@ -98,6 +98,11 @@
                     id="isMP4"
                 /><span>强制MP4</span>
                 <input
+                    checked
+                    type="checkbox"
+                    id="playVodMp4UseSrc"
+                /><span>优先使用video标签内置播放</span> |
+                <input
                     type="checkbox"
                     id="isHls"
                 /><span>强制HLS</span>
@@ -171,6 +176,7 @@
     var $isHls = document.getElementById('isHls');
     var $isMP4 = document.getElementById('isMP4');
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
+    var $playVodMp4UseSrc = document.getElementById('playVodMp4UseSrc');
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -203,6 +209,7 @@
                 audio: showOperateBtns,
                 performance: showOperateBtns,
             },
+            playVodMp4UseSrc: $playVodMp4UseSrc.checked,
             playVodConfig: {
                 showRateBtn: true,
                 rateConfig: [
