@@ -509,7 +509,7 @@
             isResize: false,
             text: "",
             loadingText: "加载中",
-            debug: true,
+            debug: false,
             debugLevel: "debug",
             decoderErrorAutoWasm: false,
             showBandwidth: showOperateBtns, // 显示网速
@@ -546,12 +546,16 @@
     }
 
 
-    for (let i = 0; i < num; i++) {
-        create(i + 1, i);
-        $player.style.display = 'inline-block';
-        $pause.style.display = 'none';
-        $destroy.style.display = 'none';
+    function create() {
+        for (let i = 0; i < num; i++) {
+            _create(i + 1, i);
+            $player.style.display = 'inline-block';
+            $pause.style.display = 'none';
+            $destroy.style.display = 'none';
+        }
     }
+
+    create();
 
 
     $player.addEventListener('click', function () {
