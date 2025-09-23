@@ -88,16 +88,23 @@
                         id="isFFmpegSIMD"
                         onclick="replay()"
                     /><span>isSIMD(V2)</span>
-                    <span id="useSIMDMThreadingWrap">
-                        <input
-                            type="checkbox"
-                            checked
-                            id="useSIMDMThreading"
-                            onclick="replay()"
-                        /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
-                    </span>
-
                     <span style="color: green">默认使用wasm解码器</span>
+
+                </div>
+                <div class="input">
+                    <span>软解码模式：</span>
+                    <input
+                        checked
+                        type="checkbox"
+                        id="useSThreading"
+                        onclick="replayBySThreading()"
+                    /><span>启动单独音视频线程</span>
+                    <input
+                        type="checkbox"
+                        id="useSIMDMThreading"
+                        onclick="replay()"
+                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span><span style="color: green">默认使用音视频同一个线程</span>
+
                 </div>
             </div>
         </div>
@@ -168,7 +175,9 @@
                 /><span>自动隐藏控制条</span>
             </div>
         </div>
-
+        <div class="input">
+            <a href="https://jessibuca.com/test-url.html" target="_blank">测试地址</a>
+        </div>
         <div class="input">
             <div>输入URL：</div>
             <input
@@ -211,6 +220,7 @@
     var $mseDecoderUseWorker = document.getElementById('mseDecoderUseWorker');
     var $controlAutoHide = document.getElementById('controlAutoHide');
     var $audioDecodeUseHardware = document.getElementById('audioDecodeUseHardware');
+    var $useSThreading = document.getElementById('useSThreading');
 
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
@@ -237,6 +247,7 @@
             useSIMD: $useSIMD.checked === true,
             isFFmpegSIMD: $isFFmpegSIMD.checked === true,
             useMThreading: $useSIMDMThreading.checked === true,
+            useSThreading: $useSThreading.checked === true,
             showBandwidth: showOperateBtns, // 显示网速
             showPerformance: showOperateBtns, // 显示性能
             operateBtns: {
@@ -301,6 +312,7 @@
                 $destroy.style.display = 'inline-block';
                 notifySuccess('播放成功');
             }).catch((error)=>{
+                notifyError(`play error: ${error}`)
                 jessibuca.showErrorMessageTips(error.toString());
             });
 
@@ -309,6 +321,10 @@
         }
     }
 
+    function replayBySThreading() {
+        $useSIMDMThreading.checked = false;
+        replay();
+    }
 
     function replay(options) {
         if (jessibuca) {
