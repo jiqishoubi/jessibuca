@@ -3184,6 +3184,13 @@ const jessibuca = new JessibucaPro({
 1. 如果有播放地址，可以通过Jessibuca官网来测试播放，官网里面都已经配置了vconsole
 
 
+### 在 iOS Hybrid App 的 WebView 中默认全屏播放
+
+问题表现：在 App WebView 里播放视频默认全屏播放。
+
+解决方案：
+1. 配置 WebView 的参数 allowsInlineMediaPlayback = YES 允许视频行内播放，即禁止 WebView/UiWebView 强制全屏播放视频。
+
 ### 浏览器的兼容性
 
 目前播放器打包的`browserslist`配置参数是：`defaults`
@@ -3364,6 +3371,87 @@ ERR_CERT_COMMON_NAME_INVALID 可能得原因:
     - 1920×1080 是标准的 1080p，能整除 16。
 
 > 但是 1920×1088 的高度 1088 不能被 16 整除，导致解码器在处理最后一行宏块时，无法正确参考上方的宏块，从而引发花屏。
+
+
+### 视频激活播放后强制全屏
+
+在单击视频激活播放后，直接全屏播放，通常出现在 Android、iOS 的微信、手机 QQ、QQ 浏览器等浏览器中。
+
+解决方案：
+
+1.如需实现页面内（非全屏）播放，需要在 video 标签中加入 playsinline 和 webkit-playsinline 属性，
+
+> Jessibuca Pro 版本 默认会在 video 标签中加上 playsinline 和 webkit-playsinline 属性。iOS10+ 识别 playsinline 属性，版本小于10的系统识别 webkit-playsinline 属性
+
+> 由于 Android 的开放性，出现了许多定制浏览器，这些属性不一定生效。
+
+
+### 视频无法被其他元素覆盖
+
+无法将其他元素覆盖到视频区域上，播放器控件为浏览器自带控件。
+
+解决方案：
+
+1. 可以使用ws播放地址 + wasm+canvas的方式播放视频，这样视频是渲染在canvas上面的。
+
+
+### 播放器出现广告、下载、推荐视频等内容
+
+视频在播放、暂停、结束时，视频区域出现广告内容，或者下载按钮。
+
+
+解决方案：
+
+1. 可以使用ws播放地址 + wasm+canvas的方式播放视频，这样视频是渲染在canvas上面的。
+
+### 全屏相关问题
+
+这里主要介绍全屏相关的问题，首先需要了解屏幕全屏（系统全屏）、网页全屏（页面全屏、伪全屏）两个概念。
+
+#### 屏幕全屏
+
+是指在屏幕范围内全屏，全屏后只有视频画面内容，看不到浏览器的地址栏等界面，这种全屏需要浏览器提供接口支持。支持屏幕全屏的接口有两种，一种称为 Fullscreen API，通过 Fullscreen API 进入屏幕全屏后的特点是，进入全屏后仍然可以看到由 HTML CSS 组成的播放器界面。另一种接口为 webkitEnterFullScreen，该接口只能作用于 video 标签，通常用于移动端不支持 Fullscreen API 的情况，通过该接口全屏后，播放器界面为系统自带的界面。
+
+#### 网页全屏
+
+是指在网页显示区域范围内全屏，全屏后仍可以看到浏览器的地址栏等界面，通常情况下网页全屏是为了应对浏览器不支持系统全屏而实现类似全屏的一种方式，所以又称伪全屏。该全屏方式由 CSS 实现。
+
+#### 支持程度
+
+1. x5 内核（包括 Android 端的微信、手机 QQ 和 QQ 浏览器）：不支持 Fullscreen API，支持 webkitEnterFullScreen，全屏后进入 x5 内核的屏幕全屏模式。
+2. Android Chrome：支持 Fullscreen API，全屏后进入带有腾讯云播放器 UI 的屏幕全屏模式。
+3. iOS （包括微信、手机 QQ、Safari）：不支持 Fullscreen API，支持 webkitEnterFullScreen，全屏后进入 iOS 系统 UI 的屏幕全屏模式。
+4. IE8/9/10：不支持 Fullscreen API，不支持 webkitEnterFullScreen，全屏为网页全屏模式。
+5. 桌面端微信浏览器：不支持 Fullscreen API，不支持 webkitEnterFullScreen，全屏为网页全屏模式 (macOS 微信浏览器目前不支持任何全屏模式)。
+6. 其他桌面端现代浏览器：通常支持 Fullscreen API，全屏后进入带有腾讯云播放器 UI 的屏幕全屏模式。
+
+### 播放器出现黑边
+
+现象：播放视频时，播放器区域内出现黑边。
+
+> 主要出现在IOS系统的Safari浏览器中。
+
+解决方案：
+设置播放器的尺寸比率与视频实际的尺寸比率一致， 例如，视频的分辨率为1280 x 720，播放器的尺寸可以设置为640 x 360或者1280 x 720等，只要满足16:9（1280:720）的宽高比，就能完全显示视频，播放器不会出现黑边。如果视频自带黑边，则需要在转码的时候切掉视频的黑边内容，改变视频的分辨率。
+
+
+### 在 Hybrid App 的 WebView 中自动播放失败
+
+问题表现：在 App WebView 里自动播放失败。
+
+解决方案：需要设置 WebView 关于多媒体自动播放的属性：
+
+#### iOS：
+```
+mediaPlaybackRequiresUserAction = NO
+```
+
+#### Android：
+
+```
+webView.getSettings().setMediaPlaybackRequiresUserGesture(false)
+
+```
 
 ## 支持作者
 
