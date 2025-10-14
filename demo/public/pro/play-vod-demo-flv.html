@@ -182,15 +182,8 @@
                 performance: showOperateBtns,
             },
             playbackConfig: {
-                controlType: 'simple',
-                duration: 0,
                 showControl: true,
-                isUseFpsRender: true,
-                isCacheBeforeDecodeForFpsRender: true,
                 showRateBtn: true,
-                supportWheel: true,
-                uiUsePlaybackPause: true,
-                isPlaybackPauseClearCache: false,
                 rateConfig: [
                     {label: '正常', value: 1},
                     {label: '2倍', value: 2},
@@ -214,9 +207,9 @@
                 useSIMD: $useSIMD.checked,
             },
             muted: $isMute.checked === true,
-            playbackCheckStreamEnd: false,
             demuxUseWorker: $demuxUseWorker.checked === true,
             isFlv: $isFlv.checked === true,
+            isSpecialPlaybackVod: true,
         },);
 
         $player.style.display = 'inline-block';
