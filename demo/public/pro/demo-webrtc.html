@@ -67,7 +67,16 @@
                         type="checkbox"
                         id="webrtcForSRSByWhipWhep"
                     /><span>SRS服务器（Whip-Whep)格式</span>
-                    <span style="color: green">url 格式：webrtc://127.0.0.1/rtc/v1/whep/?app=live&stream={livestream}</span>
+                    <span
+                        style="color: green">url 格式：webrtc://127.0.0.1/rtc/v1/whep/?app=live&stream={livestream}</span>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        id="webrtcForSRSByWhipWhepOldVersion"
+                    /><span>SRS服务器（Whip-Whep)Old版本格式</span>
+                    <span
+                        style="color: green">url 格式：webrtc://127.0.0.1/rtc/v1/whep/?app=live&stream={livestream}</span>
                 </div>
             </div>
         </div>
@@ -104,10 +113,24 @@
         <div class="input" style="border-bottom: 1px solid">
             <div>
                 <input
-                    checked
                     type="checkbox"
                     id="checkWebrtcLowFps"
                 /><span>是否检测低FPS，触发重播逻辑(在5s内平均FPS低于3)</span>
+
+                <input
+                    type="checkbox"
+                    id="isEmitSEI"
+                /><span>是否采集SEI数据</span>
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                直播模式：
+                <select id="webrtcPlayType">
+                    <option value="" selected>实时直播(低延迟)</option>
+                    <option value="lowNetwork">弱网直播(中等延迟)</option>
+                    <option value="highQuality">纯观看端(高延迟)</option>
+                </select>
             </div>
         </div>
         <div class="input">
@@ -138,10 +161,13 @@
     var $isWebrtcForSRS = document.getElementById('isWebrtcForSRS');
     var $webrtcForSRSBySDK = document.getElementById('webrtcForSRSBySDK');
     var $webrtcForSRSByWhipWhep = document.getElementById('webrtcForSRSByWhipWhep');
+    var $webrtcForSRSByWhipWhepOldVersion = document.getElementById('webrtcForSRSByWhipWhepOldVersion');
     var $isWebrtcForZLM = document.getElementById('isWebrtcForZLM');
     var $isWebrtcForQiNiu = document.getElementById('isWebrtcForQiNiu');
     var $isWebrtcForDJI = document.getElementById('isWebrtcForDJI');
     var $checkWebrtcLowFps = document.getElementById('checkWebrtcLowFps');
+    var $webrtcPlayType = document.getElementById('webrtcPlayType');
+    var $isEmitSEI = document.getElementById('isEmitSEI');
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -177,14 +203,16 @@
             // hasAudio:false,
             isWebrtcForOthers: $isForOthers.checked === true,
             isWebrtcForZLM: $isWebrtcForZLM.checked === true,
-            isEmitSEI: true,
+            isEmitSEI: $isEmitSEI.checked === true,
             isWebrtcForSRS: $isWebrtcForSRS.checked === true,
             webrtcForSRSBySDK: $webrtcForSRSBySDK.checked === true,
             webrtcForSRSByWhipWhep: $webrtcForSRSByWhipWhep.checked === true,
+            webrtcForSRSByWhipWhepOldVersion: $webrtcForSRSByWhipWhepOldVersion.checked === true,
             isWebrtcForQiNiu: $isWebrtcForQiNiu.checked === true,
             isWebrtcForDJI: $isWebrtcForDJI.checked === true,
             checkWebrtcLowFps: $checkWebrtcLowFps.checked === true,
             // videoRenderType:'canvas'
+            webrtcPlayType: $webrtcPlayType.value,
         },);
 
 
@@ -204,10 +232,10 @@
         })
 
         jessibuca.on('videoSEISyncPts', (value) => {
-            const decoder = new TextDecoder(); // 创建一个 TextDecoder 对象
-            let str = decoder.decode(value.data);
+            // const decoder = new TextDecoder(); // 创建一个 TextDecoder 对象
+            // let str = decoder.decode(value.data);
 
-            console.log(`videoSEISyncPts pts is ${value.pts} ,ts is ${value.ts}, data is`, value.data, str);
+            // console.log(`videoSEISyncPts pts is ${value.pts} ,ts is ${value.ts}, data is`, value.data, str);
 
 
         })
