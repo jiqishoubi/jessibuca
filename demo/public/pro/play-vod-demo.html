@@ -117,7 +117,8 @@
                 <input
                     type="checkbox"
                     id="isHls"
-                /><span>强制HLS</span>
+                /><span>强制HLS</span> |
+                开始时间(重播生效)：<input type="number" min="0" id="startTime" value="0" style="width: 50px"> 秒 |
                 <button onclick="replay()">重播</button>
             </div>
         </div>
@@ -133,8 +134,10 @@
             />
         </div>
         <div class="input">
-            <button id="play">播放</button>
-            <button id="playVodPause">停止</button>
+            <div>
+                <button id="play">播放</button>
+                <button id="playVodPause">停止</button>
+            </div>
         </div>
         <div class="input">
             <button onclick="playVodNextFrame()">逐帧播放</button>
@@ -195,6 +198,7 @@
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
     var $playVodMp4UseSrc = document.getElementById('playVodMp4UseSrc');
     var $useSThreading = document.getElementById('useSThreading');
+    var $startTime = document.getElementById('startTime');
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -231,6 +235,7 @@
             playVodMp4UseSrc: $playVodMp4UseSrc.checked,
             playVodConfig: {
                 showRateBtn: true,
+                startTime: Number($startTime.value),
                 rateConfig: [
                     {label: '正常', value: 1},
                     {label: '2倍', value: 2},
