@@ -153,7 +153,6 @@
         <div class="input">
             <div>
                 <input
-                    checked
                     onclick="replay()"
                     type="checkbox"
                     id="isFlv"
@@ -403,7 +402,8 @@
         var jessibuca = new JessibucaPro({
             container: $container,
             decoder: './js/decoder-pro.js',
-            videoBuffer: 0.2, // 缓存时长
+            videoBuffer: Number($videoBuffer.value), // 缓存时长
+            videoBufferDelay: Number($videoBufferDelay.value), //
             isResize: false,
             text: "",
             loadingText: "加载中",

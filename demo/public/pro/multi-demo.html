@@ -68,6 +68,15 @@
         </div>
         <div class="input">
             <div>
+                <span>缓存时长：</span>
+                <input placeholder="单位：秒" type="text" id="videoBuffer" style="width: 50px" value="0.2">秒
+                <span>缓存延迟(延迟超过会触发丢帧)：</span>
+                <input placeholder="单位：秒" type="text" id="videoBufferDelay" style="width: 50px" value="2">秒
+                <button onclick="replay()">重播</button>
+            </div>
+        </div>
+        <div class="input">
+            <div>
                 <span>选择：</span>
                 <select id="windowIndex" style="width: 140px">
                     <option value="0" selected>第1屏</option>
@@ -121,6 +130,8 @@
     var $fullscreenMulti = document.getElementById('fullscreenMulti');
     var $supportDraggable = document.getElementById('supportDraggable');
     var $supportContainerFullscreen = document.getElementById('supportContainerFullscreen');
+    var $videoBuffer = document.getElementById('videoBuffer');
+    var $videoBufferDelay = document.getElementById('videoBufferDelay');
 
     let jessibucaMulti = null;
     var showOperateBtns = true; // 是否显示按钮
@@ -131,6 +142,8 @@
             split: 2,// default
             isResize: false,
             decoder: './js/decoder-pro.js',
+            videoBuffer: Number($videoBuffer.value), // 缓存时长
+            videoBufferDelay: Number($videoBufferDelay.value), //
             debug: true,
             useMSE: true,
             decoderErrorAutoWasm: false,
