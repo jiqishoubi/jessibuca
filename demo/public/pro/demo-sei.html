@@ -98,6 +98,15 @@
         </div>
         <div class="input">
             <div>
+                <input
+                    onclick="replay()"
+                    type="checkbox"
+                    id="isFlv"
+                /><span>强制识别成flv <span style="color: red">(播放路径不是以.flv结尾的，建议勾选上)</span> </span>
+            </div>
+        </div>
+        <div class="input">
+            <div>
                 <span>缓存时长：</span>
                 <input placeholder="单位：秒" type="text" id="videoBuffer" style="width: 50px" value="0.2">秒
                 <span>缓存延迟(延迟超过会触发丢帧)：</span>
@@ -157,6 +166,8 @@
     var $isEmitSEI = document.getElementById('isEmitSEI');
     var $videoSEISyncPts = document.getElementById('videoSEISyncPts');
 
+    var $isFlv = document.getElementById('isFlv');
+
     var showOperateBtns = true; // 是否显示按钮
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -203,8 +214,7 @@
             useWebGPU: $isUseWebGPU.value === 'webgpu',
             controlHtml: '<div>我是 <span style="color: red">test</span>文案</div>',
             isEmitSEI: $isEmitSEI.checked === true,
-            // audioEngine:"worklet",
-            // isFlv: true
+            isFlv: $isFlv.checked === true,
         },);
 
 
