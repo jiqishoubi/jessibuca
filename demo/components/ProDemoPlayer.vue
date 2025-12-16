@@ -1039,6 +1039,12 @@ export default {
                 this.jessibuca.playbackResume()
             } else {
                 if (this.playUrl) {
+                    const checkResult = checkUrlIsValid(this.playUrl);
+                    if (!checkResult.result) {
+                        ElMessage.error(checkResult.msg);
+                        return;
+                    }
+
                     this.jessibuca.playback(this.playUrl, {
                         playList,
                         fps: 25,
@@ -1067,6 +1073,12 @@ export default {
                 this.jessibuca.playVodResume()
             } else {
                 if (this.playUrl) {
+                    const checkResult = checkUrlIsValid(this.playUrl);
+                    if (!checkResult.result) {
+                        ElMessage.error(checkResult.msg);
+                        return;
+                    }
+
                     this.jessibuca.playVod(this.playUrl, {
                         useMSE: this.useMSE,
                         useWCS: this.useWCS,
@@ -1090,6 +1102,12 @@ export default {
                 this.jessibuca.playVodResume()
             } else {
                 if (this.playUrl) {
+                    const checkResult = checkUrlIsValid(this.playUrl);
+                    if (!checkResult.result) {
+                        ElMessage.error(checkResult.msg);
+                        return;
+                    }
+
                     // 重置下
                     this.jessibuca.once('start', () => {
                         this.jessibuca.enterVr();
