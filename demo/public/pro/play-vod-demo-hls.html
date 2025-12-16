@@ -6,7 +6,7 @@
     <meta http-equiv="origin-trial"
           content="AhQB+uNRI7lww30oPK+0ZcGotIvuoHJL+NkkWOhqDdooY6+xnuiYmZli2SwlH1vkrKdB5WxMpsv5KRc/q9zFswoAAAB3eyJvcmlnaW4iOiJodHRwczovL2plc3NpYnVjYS5jb206NDQzIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNzA5ODU1OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Jessibuca Pro 点播 demo</title>
+    <title>Jessibuca Pro hls 点播 demo</title>
     <script src="./vconsole.js"></script>
     <script src="./js/jessibuca-pro-demo.js"></script>
     <link rel="stylesheet" href="./demo.css">
@@ -82,15 +82,26 @@
                         id="isFFmpegSIMD"
                         onclick="replay()"
                     /><span>isSIMD(V2)</span>
-                    <input
-                        type="checkbox"
-                        checked
-                        id="useSIMDMThreading"
-                        onclick="replay()"
-                    /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span>
-                    <span style="color: green">默认使用wasm解码器</span>
                 </div>
             </div>
+        </div>
+        <div class="input">
+            <div>
+                <span>软解码模式：</span>
+                <input
+                    checked
+                    type="checkbox"
+                    id="useSThreading"
+                    onclick="replayBySThreading()"
+                /><span>启动单独音视频线程</span>
+                <input
+                    type="checkbox"
+                    id="useSIMDMThreading"
+                    onclick="replay()"
+                /><span>启动多线程（WASM,WASM(SIMD)解码支持）</span><span style="color: green">默认使用音视频同一个线程</span>
+            </div>
+
+
         </div>
 
         <div class="input">
@@ -101,6 +112,7 @@
                     type="checkbox"
                     id="isHls"
                 /><span>强制HLS</span>
+                开始时间(重播生效)：<input type="number" min="0" id="startTime" value="0" style="width: 50px"> 秒 |
                 <button onclick="replay()">重播</button>
             </div>
         </div>
@@ -128,12 +140,26 @@
             />
         </div>
         <div class="input">
-            <button id="play">播放</button>
-            <button id="playVodPause">停止</button>
+            <div>
+                <button id="play">播放</button>
+                <button id="playVodPause">停止</button>
+            </div>
+        </div>
+        <div class="input">
+            <button onclick="playVodNextFrame()">逐帧播放</button>
+            <button onclick="playVodExitNextFrameAndPlay()">退出逐帧播放</button>
+        </div>
+        <div class="input">
+            <button onclick="playVodNextIFrame()">逐关键帧播放</button>
+            <button onclick="playVodExitNextIFrameAndPlay()">退出逐关键帧播放</button>
         </div>
         <div class="input">
             <button id="playVodForward">快进10s</button>
+            <span>|</span>
             <button id="playVodBackword">快退10s</button>
+            <span>|</span>
+
+            切换倍率
             <select id="forward" onchange="changeForward()">
                 <option value="0.1">0.1</option>
                 <option value="0.5">0.5</option>
@@ -147,7 +173,10 @@
                 <option value="14">14</option>
                 <option value="16">16</option>
             </select>
+            <span>|</span>
+
             <button onclick="getPlayVodIsPause()">当前状态</button>
+            <button onclick="toggleControlBar()">隐藏/显示控制栏</button>
         </div>
         <div class="input" style="line-height: 30px">
             <button id="destroy">销毁</button>
@@ -171,7 +200,8 @@
     var $playVodBackword = document.getElementById('playVodBackword');
     var $isHls = document.getElementById('isHls');
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
-
+    var $useSThreading = document.getElementById('useSThreading');
+    var $startTime = document.getElementById('startTime');
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -192,6 +222,7 @@
             debugLevel: 'debug',
             isFFmpegSIMD: $isFFmpegSIMD.checked === true,
             useMThreading: $useSIMDMThreading.checked === true,
+            useSThreading: $useSThreading.checked === true,
             decoderErrorAutoWasm: false,
             timeout: 10000,
             // showPerformance: true,
@@ -206,6 +237,7 @@
             },
             playVodConfig: {
                 showRateBtn: true,
+                startTime: Number($startTime.value),
                 rateConfig: [
                     {label: '0.1倍', value: 0.1},
                     {label: '0.5倍', value: 0.5},
@@ -243,6 +275,11 @@
 
 
     create();
+
+    function replayBySThreading() {
+        $useSIMDMThreading.checked = false;
+        replay();
+    }
 
     function replay() {
         if (jessibuca) {
@@ -366,10 +403,40 @@
         }
     }
 
+    function toggleControlBar() {
+        if (jessibuca) {
+            jessibuca.toggleControlBar();
+        }
+    }
+
     function changeForward() {
         const forward = document.getElementById('forward').value;
         if (jessibuca) {
             jessibuca.playVodForward(forward);
+        }
+    }
+
+    function playVodNextFrame() {
+        if (jessibuca) {
+            jessibuca.playVodNextFrame();
+        }
+    }
+
+    function playVodExitNextFrameAndPlay() {
+        if (jessibuca) {
+            jessibuca.playVodExitNextFrameAndPlay();
+        }
+    }
+
+    function playVodNextIFrame() {
+        if (jessibuca) {
+            jessibuca.playVodNextIFrame();
+        }
+    }
+
+    function playVodExitNextIFrameAndPlay() {
+        if (jessibuca) {
+            jessibuca.playVodExitNextIFrameAndPlay();
         }
     }
 

@@ -131,6 +131,14 @@
             <button id="play">播放</button>
             <button id="playbackPause">停止</button>
         </div>
+        <div class="input">
+            <button onclick="playbackNextFrame()">逐帧播放</button>
+            <button onclick="playbackExitNextFrameAndPlay()">退出逐帧播放</button>
+        </div>
+        <div class="input">
+            <button onclick="playbackNextIFrame()">逐关键帧(I帧)播放</button>
+            <button onclick="playbackExitNextIFrameAndPlay()">退出逐关键帧(I帧)播放</button>
+        </div>
         <div class="input" style="line-height: 30px">
             <button id="destroy">销毁</button>
         </div>
@@ -309,6 +317,29 @@
         }
         replay();
     })
+
+    function playbackNextFrame(){
+        if (jessibuca) {
+            jessibuca.playbackNextFrame();
+        }
+    }
+
+    function playbackExitNextFrameAndPlay(){
+        if (jessibuca) {
+            jessibuca.playbackExitNextFrameAndPlay();
+        }
+    }
+
+    function playbackExitNextIFrameAndPlay() {
+        if (jessibuca) {
+            jessibuca.playbackExitNextIFrameAndPlay();
+        }
+    }
+
+    function replayBySThreading() {
+        $useSIMDMThreading.checked = false;
+        replay();
+    }
 
 
 </script>

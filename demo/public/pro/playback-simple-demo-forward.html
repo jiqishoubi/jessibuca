@@ -82,6 +82,14 @@
                     </span>
 
                 </div>
+                <div>
+                    <input
+                        checked
+                        onclick="replay()"
+                        type="checkbox"
+                        id="isMute"
+                    /><span>是否静音播放</span>
+                </div>
             </div>
         </div>
         <div class="input">
@@ -122,8 +130,12 @@
             <button id="playbackPause">停止</button>
         </div>
         <div class="input">
-            <button onclick="playVodNextFrame()">逐帧播放</button>
-            <button onclick="playVodExitNextFrameAndPlay()">退出逐帧播放</button>
+            <button onclick="playbackNextFrame()">逐帧播放</button>
+            <button onclick="playbackExitNextFrameAndPlay()">退出逐帧播放</button>
+        </div>
+        <div class="input">
+            <button onclick="playbackNextIFrame()">逐关键帧(I帧)播放</button>
+            <button onclick="playbackExitNextIFrameAndPlay()">退出逐关键帧(I帧)播放</button>
         </div>
         <div class="input" style="line-height: 30px">
             <button id="destroy">销毁</button>
@@ -144,6 +156,7 @@
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
     var $demuxUseWorker = document.getElementById('demuxUseWorker');
     var $isFlv = document.getElementById('isFlv');
+    var $isMute = document.getElementById('isMute');
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -194,7 +207,7 @@
                 useMSE: false,
                 useSIMD: $useSIMD.checked,
             },
-            isNotMute: false,
+            muted: $isMute.checked === true,
             demuxUseWorker: $demuxUseWorker.checked === true,
             isFlv: $isFlv.checked === true,
             isSpecialPlaybackVod: true,
@@ -303,16 +316,27 @@
         replay();
     })
 
-    function playVodNextFrame(){
+    function playbackNextFrame(){
         if (jessibuca) {
             jessibuca.playbackNextFrame();
         }
     }
 
-    function playVodExitNextFrameAndPlay(){
+    function playbackExitNextFrameAndPlay(){
         if (jessibuca) {
             jessibuca.playbackExitNextFrameAndPlay();
         }
+    }
+
+    function playbackExitNextIFrameAndPlay() {
+        if (jessibuca) {
+            jessibuca.playbackExitNextIFrameAndPlay();
+        }
+    }
+
+    function replayBySThreading() {
+        $useSIMDMThreading.checked = false;
+        replay();
     }
 
 

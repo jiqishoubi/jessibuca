@@ -6,13 +6,13 @@
     <meta http-equiv="origin-trial"
           content="AhQB+uNRI7lww30oPK+0ZcGotIvuoHJL+NkkWOhqDdooY6+xnuiYmZli2SwlH1vkrKdB5WxMpsv5KRc/q9zFswoAAAB3eyJvcmlnaW4iOiJodHRwczovL2plc3NpYnVjYS5jb206NDQzIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNzA5ODU1OTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Jessibuca Pro 点播 demo</title>
+    <title>Jessibuca Pro (mp4/hls)点播 demo</title>
     <script src="./vconsole.js"></script>
     <script src="./js/jessibuca-pro-demo.js"></script>
     <link rel="stylesheet" href="./demo.css">
     <style>
         .container-shell:before {
-            content: "jessibuca pro 点播 demo";
+            content: "jessibuca pro (mp4/hls) 点播 demo";
         }
     </style>
 </head>
@@ -142,6 +142,10 @@
         <div class="input">
             <button onclick="playVodNextFrame()">逐帧播放</button>
             <button onclick="playVodExitNextFrameAndPlay()">退出逐帧播放</button>
+        </div>
+        <div class="input">
+            <button onclick="playVodNextIFrame()">逐关键帧播放</button>
+            <button onclick="playVodExitNextIFrameAndPlay()">退出逐关键帧播放</button>
         </div>
         <div class="input">
             <button id="playVodForward">快进10s</button>
@@ -431,6 +435,18 @@
     function playVodExitNextFrameAndPlay() {
         if (jessibuca) {
             jessibuca.playVodExitNextFrameAndPlay();
+        }
+    }
+
+    function playVodNextIFrame() {
+        if (jessibuca) {
+            jessibuca.playVodNextIFrame();
+        }
+    }
+
+    function playVodExitNextIFrameAndPlay() {
+        if (jessibuca) {
+            jessibuca.playVodExitNextIFrameAndPlay();
         }
     }
 

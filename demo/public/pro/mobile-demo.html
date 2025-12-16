@@ -46,15 +46,14 @@
                       style="color: red;display: none">不支持WASM SIMD解码,会自动切换成wasm解码</span>
             </div>
         </div>
-        <div class="input">
-            <div>
-                <input
-                    type="checkbox"
-                    id="useWebFullScreen"
-                /><span>使用web全屏</span>
-            </div>
-
-        </div>
+<!--        <div class="input">-->
+<!--            <div>-->
+<!--                <input-->
+<!--                    type="checkbox"-->
+<!--                    id="useWebFullScreen"-->
+<!--                /><span>使用web全屏</span>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="input">
             <div>输入URL：</div>
             <input
@@ -105,7 +104,7 @@
                 audio: showOperateBtns,
             },
             forceNoOffscreen: forceNoOffscreen,
-            useWebFullScreen: $useWebFullScreen.checked,
+            // useWebFullScreen: $useWebFullScreen.checked,
             isNotMute: false,
         },);
 

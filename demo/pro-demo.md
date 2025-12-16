@@ -154,7 +154,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/playback-simple-demo.html](http://jessibuca.monibuca.com/pro/playback-simple-demo.html)
 
-### 特殊回放流/点播文件(支持暂停缓存数据，本地倍率，逐帧播放，不支持seek)
+### 特殊回放流/点播文件(支持暂停缓存数据，本地倍率，逐帧播放，逐关键帧(I帧)播放，不支持seek)
 
 #### https
 [https://jessibuca.com/pro/playback-simple-demo-forward.html](https://jessibuca.com/pro/playback-simple-demo-forward.html)
@@ -165,7 +165,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 
 ## 点播Demo(支持mse、wcs、wasm、simd)
 
-### demo（支持逐帧播放）
+### demo（支持逐帧播放，逐关键帧(I帧)播放）
 ------
 #### https
 
@@ -175,7 +175,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [http://jessibuca.monibuca.com/pro/play-vod-demo.html](http://jessibuca.monibuca.com/pro/play-vod-demo.html)
 
 
-### mp4 demo
+### mp4 demo（支持逐帧播放，逐关键帧(I帧)播放）
 ------
 #### https
 
@@ -185,7 +185,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [http://jessibuca.monibuca.com/pro/play-vod-demo-mp4.html](http://jessibuca.monibuca.com/pro/play-vod-demo-mp4.html)
 
 
-### hls demo
+### hls demo（支持逐帧播放，逐关键帧(I帧)播放）
 
 ------
 #### https
@@ -195,7 +195,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-hls.html](http://jessibuca.monibuca.com/pro/play-vod-demo-hls.html)
 
-### flv demo
+### flv demo（支持逐帧播放，逐关键帧(I帧)播放）
 
 ------
 #### https
@@ -205,7 +205,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-flv.html](http://jessibuca.monibuca.com/pro/play-vod-demo-flv.html)
 
-### ps demo
+### ps demo（支持逐帧播放，逐关键帧(I帧)播放）
 ------
 #### https
 
