@@ -152,16 +152,17 @@
             <div>
                 <span>不断流暂停是否清除缓存数据</span>
                 <select id="isPlaybackPauseClearCache" style="width: 50px">
-                    <option value="true" selected>是</option>
-                    <option value="false">否</option>
+                    <option value="true">是</option>
+                    <option value="false" selected>否</option>
                 </select>
+                (暂停之后继续播放会记着暂停前的画面,无黑屏)
             </div>
         </div>
         <div class="input">
             <span>ui是否使用playbackPause</span>
             <select id="uiUsePlaybackPause" style="width: 50px">
-                <option value="true">是</option>
-                <option value="false" selected>否</option>
+                <option value="true" selected>是</option>
+                <option value="false">否</option>
             </select>
         </div>
         <div class="input">
@@ -178,7 +179,7 @@
                 <option value="true" selected>是</option>
                 <option value="false">否</option>
             </select>
-            <span>(如果检测流结束，会抛出streamEnd异常，否的话，则会渲染完所有数据抛出playbackEnd事件)</span>
+            <span>(如果<span style="color:red">是</span>检测流结束，会抛出streamEnd异常，<span style="color:green">否</span>的话，则会渲染完所有数据抛出playbackEnd事件)</span>
         </div>
         <div class="input">
             <button onclick="replay()">重播</button>
