@@ -314,6 +314,7 @@
                         <button v-if="playType === '' || playType === 'playback'" @click="playback">播放录像流</button>
                         <button v-if="playType === '' || playType === 'playVod'" @click="playVod">播放点播文件</button>
                         <button v-if="playType === '' || playType === 'playVR'" @click="playVR">播放VR文件</button>
+                        <a href="/pro-demo.html" target="_blank" style="color: red">更多demo地址</a>
                     </template>
                     <template v-if="loading || playing">
                         <template v-if="playType === 'play'">

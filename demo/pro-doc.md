@@ -181,6 +181,27 @@ lnk.Save();
 保存后重启浏览器，通过该快捷方式启动浏览器，将自动启用多线程特性
 
 
+### 检查是否成功
+
+打开浏览器的F12开发者工具，选择控制台，输入以下代码：
+
+```js
+console.log(typeof SharedArrayBuffer)
+```
+
+如果输出结果为 `function`，则表示配置成功，可以使用多线程解码特性。
+
+<img src="/public/img/shared-array-buffer-support.png">
+
+如果是 `undefined`，则表示配置失败，无法使用多线程解码特性。
+
+<img src="/public/img/shared-array-buffer-not-support.png">
+
+
+
+如果输出结果为 `function`，则表示配置成功，可以使用多线程解码特性。
+
+
 ## 关于直播流，回放流，点播文件三者的差异性
 
 - 业务上面直播流是实时的，

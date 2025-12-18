@@ -71,9 +71,7 @@ https://live.nodemedia.cn:8443/live/sony_4k_264.flv
 
 > 需要通过本地local域名访问，公网会校验域名
 
-##### 七牛云 1080p
 
-https://live-mikudemo.cloudvdn.com/mikudemo/timestamps.m3u8
 
 #### H265
 
@@ -104,6 +102,10 @@ http://pull-demo.volcfcdnrd.com/live/st-4536521_yzmuhevcd.flv
 ##### 西瓜视频（1280 * 720） m3u8 + ts
 
 https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/hls/xgplayer-demo.m3u8
+
+##### 七牛云 1080p
+
+https://live-mikudemo.cloudvdn.com/mikudemo/timestamps.m3u8
 
 #### H265
 
