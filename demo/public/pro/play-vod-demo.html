@@ -54,6 +54,11 @@
         </div>
         <div class="input">
             <div>
+               TIPS: <span style="color: red">4k视频</span>建议使用 <span style="color:green;">硬解码(MediaSource/Webcodec)</span> 播放 ，软解码选择 <span style="color: green">WASM(SIMD)</span> + 启动单独音频视频线程。
+            </div>
+        </div>
+        <div class="input">
+            <div>
                 <div>
                     <span>硬解码：</span>
                     <input
@@ -180,7 +185,6 @@
 <script src="./demo.js"></script>
 
 <script>
-    ;
 
     var $player = document.getElementById('play');
     var $playVodPause = document.getElementById('playVodPause');

@@ -44,7 +44,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 
 ## 音视频直播流Demo(支持 mse、wcs、wasm、simd解码)(根据url地址解析协议)
 
-### demo（支持多线程）
+### demo（支持多线程，4k25P(硬解码+软解码)）
 ------
 
 #### https
@@ -154,7 +154,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/playback-simple-demo.html](http://jessibuca.monibuca.com/pro/playback-simple-demo.html)
 
-### 特殊回放流/点播文件(支持暂停缓存数据，本地倍率，逐帧播放，逐关键帧(I帧)播放，监听播放结束，不支持seek)
+### 特殊回放流/点播文件(支持暂停缓存数据，本地倍率，逐帧播放，逐关键帧(I帧)播放，监听播放结束，4k25P(硬解码+软解码)，不支持seek)
 
 #### https
 [https://jessibuca.com/pro/playback-simple-demo-forward.html](https://jessibuca.com/pro/playback-simple-demo-forward.html)
@@ -165,7 +165,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 
 ## 点播Demo(支持mse、wcs、wasm、simd)
 
-### demo（支持逐帧播放，逐关键帧(I帧)播放）
+### demo（支持逐帧播放，逐关键帧(I帧)播放，4k25P(硬解码+软解码)）
 ------
 #### https
 
@@ -175,7 +175,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [http://jessibuca.monibuca.com/pro/play-vod-demo.html](http://jessibuca.monibuca.com/pro/play-vod-demo.html)
 
 
-### mp4 demo（支持逐帧播放，逐关键帧(I帧)播放）
+### mp4 demo（支持逐帧播放，逐关键帧(I帧)播放，4k25P(硬解码+软解码)）
 ------
 #### https
 
@@ -185,7 +185,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [http://jessibuca.monibuca.com/pro/play-vod-demo-mp4.html](http://jessibuca.monibuca.com/pro/play-vod-demo-mp4.html)
 
 
-### hls demo（支持逐帧播放，逐关键帧(I帧)播放）
+### hls demo（支持逐帧播放，逐关键帧(I帧)播放，4k25P(硬解码+软解码)）
 
 ------
 #### https
@@ -195,7 +195,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-hls.html](http://jessibuca.monibuca.com/pro/play-vod-demo-hls.html)
 
-### flv demo（支持逐帧播放，逐关键帧(I帧)播放）
+### flv demo（支持逐帧播放，逐关键帧(I帧)播放，4k25P(硬解码+软解码)）
 
 ------
 #### https
@@ -205,7 +205,7 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-flv.html](http://jessibuca.monibuca.com/pro/play-vod-demo-flv.html)
 
-### ps demo（支持逐帧播放，逐关键帧(I帧)播放）
+### ps demo（支持逐帧播放，逐关键帧(I帧)播放，4k25P(硬解码+软解码)）
 ------
 #### https
 
