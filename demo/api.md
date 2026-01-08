@@ -66,6 +66,15 @@ new Jessibuca({
 - **默认值**：`1`
 - **用法**： 设置缓冲时长，`单位秒`。
 
+### videoBufferDelay
+
+- **类型**：`number`
+- **默认值**：`1`
+- **用法**： 设置最大缓冲延迟时长，单位秒，如果延迟超过该值，就会进行丢帧处理。
+
+> 播放器会在缓冲数据大于`videoBuffer + videoBufferDelay`的时候，进行丢帧处理。
+
+
 ### decoder
 
 - **类型**：`string`

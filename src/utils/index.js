@@ -177,7 +177,7 @@ export function isMobile() {
     return (/iphone|ipod|android.*mobile|windows.*phone|blackberry.*mobile/i.test(window.navigator.userAgent.toLowerCase()));
 }
 
-export function isPad(){
+export function isPad() {
     return (/ipad|android(?!.*mobile)|tablet|kindle|silk/i.test(window.navigator.userAgent.toLowerCase()));
 }
 
@@ -314,7 +314,7 @@ export function bpsSize$2(value) {
     if (null == value || value === '' || parseFloat(value) === 0 || value === 'NaN') {
         return "0 KB/s";
     }
-    const unitArr = ["B/s","KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s", "ZB/s", "YB/s"];
+    const unitArr = ["B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s", "EB/s", "ZB/s", "YB/s"];
     let index = 0;
     const srcsize = parseFloat(value / 8);
     index = Math.floor(Math.log(srcsize) / Math.log(1024));
@@ -547,7 +547,10 @@ export function isGreenYUV(arrayBuffer) {
 
 export function getBrowser() {
     const UserAgent = navigator.userAgent.toLowerCase();
-    const browserInfo = {};
+    const browserInfo = {
+        type: 'unknown',
+        version: 'unknown'
+    };
     const browserArray = {
         IE: window.ActiveXObject || "ActiveXObject" in window, // IE
         Chrome: UserAgent.indexOf('chrome') > -1 && UserAgent.indexOf('safari') > -1, // Chrome浏览器
