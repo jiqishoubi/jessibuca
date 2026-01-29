@@ -3540,6 +3540,43 @@ webView.getSettings().setMediaPlaybackRequiresUserGesture(false)
 
 > 解码器遇到坏数据（Bad Data）。
 
+
+### wasm 报错分析
+
+#### Could not find ref with Poc xx
+
+> xx 是一个数字，表示丢失的参考帧的 Picture Order Count (POC) 值。
+
+是 FFmpeg 在解码 H.264 / H.265（HEVC）视频时，找不到所需的参考帧（reference frame） 的意思。
+
+当前帧需要的参考帧（I帧）丢了或没解码到，导致了后面的帧无法正确解码。
+
+> 可能会导致画面花屏、马赛克、卡顿等问题。
+
+##### 原因
+
+1. 网络流丢包
+2. m3u8/fmp4 分片丢失
+3. websocket丢数据
+
+
+#### PPS id out of range: xx
+
+> xx 是一个数字，表示超出范围的 PPS ID。
+
+说明 解码器在解析视频流时，引用了一个不存在的 PPS（Picture Parameter Set）编号。
+
+
+#### Error parsing NAL unit
+
+
+> FFmpeg 在解析 NAL 单元时发现数据格式不合法或数据损坏。
+
+
+#### 小结
+
+
+
 ## 支持作者
 
 ### 第一作者
