@@ -196,6 +196,13 @@ https://vjs.zencdn.net/v/oceans.mp4
 测试地址
 
 https://raw.githubusercontent.com/nickdesaulniers/netfix/gh-pages/demo/frag_bunny.mp4
+
+西瓜视频
+
+http://lf3-static.bytednsdoc.com/obj/eden-cn/nupenuvpxnuvo/xgplayer_doc/xgplayer-demo-720p.mp4
+
+
+
 ## vr 点播测试地址
 
 ### http

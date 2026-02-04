@@ -98,6 +98,17 @@
         </div>
         <div class="input">
             <div>
+                SEI对齐帧时间戳冗余间隔(ms)：
+                <input
+                    width="300"
+                    autocomplete="on"
+                    id="videoSEISyncPtsDiff"
+                    value="150"
+                /> 需要点击 <span style="color: red">重播</span> 才能生效
+            </div>
+        </div>
+        <div class="input">
+            <div>
                 <input
                     onclick="replay()"
                     type="checkbox"
@@ -167,6 +178,7 @@
     var $isUseWebGPU = document.getElementById('isUseWebGPU');
     var $isEmitSEI = document.getElementById('isEmitSEI');
     var $videoSEISyncPts = document.getElementById('videoSEISyncPts');
+    var $videoSEISyncPtsDiff = document.getElementById('videoSEISyncPtsDiff');
 
     var $isFlv = document.getElementById('isFlv');
 
@@ -217,6 +229,7 @@
             controlHtml: '<div>我是 <span style="color: red">test</span>文案</div>',
             isEmitSEI: $isEmitSEI.checked === true,
             isFlv: $isFlv.checked === true,
+            videoSEISyncPtsDiff: parseInt($videoSEISyncPtsDiff.value, 10) / 1000, // ms to s
         },);
 
 
