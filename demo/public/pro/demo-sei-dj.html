@@ -258,6 +258,12 @@
         jessibuca.on('videoSEISyncPts', (value) => {
             const result = SEIParser.parse(value.originData);
 
+            if(!(result && result.length > 0)) {
+                // clear
+                jessibuca.addContentToCanvas([]);
+                return;
+            }
+
             result.forEach((item) => {
                 const parsedData = item.parsedData;
 
