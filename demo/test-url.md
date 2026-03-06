@@ -46,7 +46,6 @@ https://live.nodemedia.cn:8443/live/b480_264.flv
 
 https://live.nodemedia.cn:8443/live/bbb_264.flv
 
-
 > 需要通过本地local域名访问，公网会校验域名
 
 ##### vigokit 当前时间 (1040 * 634)
@@ -71,7 +70,11 @@ https://live.nodemedia.cn:8443/live/sony_4k_264.flv
 
 > 需要通过本地local域名访问，公网会校验域名
 
+##### 西瓜视频
 
+https://pull-demo.volcfcdnrd.com/live/st-4536523_yzmhde.flv
+
+http://pull-demo.volcfcdnrd.com/live/st-4536523_yzmhde.flv
 
 #### H265
 
@@ -90,7 +93,11 @@ https://live.nodemedia.cn:8443/live/tcl_265.flv
 
 ##### 西瓜视频（1920 * 1080）
 
+###### http
 http://pull-demo.volcfcdnrd.com/live/st-4536521_yzmuhevcd.flv
+
+###### https
+https://pull-demo.volcfcdnrd.com/live/st-4536521_yzmuhevcd.flv
 
 > 需要通过本地local域名访问，公网会校验域名
 
@@ -99,9 +106,16 @@ http://pull-demo.volcfcdnrd.com/live/st-4536521_yzmuhevcd.flv
 
 #### H264
 
+
+
 ##### 西瓜视频（1280 * 720） m3u8 + ts
 
 https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/hls/xgplayer-demo.m3u8
+
+https://pull-demo.volcfcdnrd.com/live/st-4536523_yzmhde.m3u8
+
+http://pull-demo.volcfcdnrd.com/live/st-4536523_yzmhde.m3u8
+
 
 ##### 七牛云 1080p
 
