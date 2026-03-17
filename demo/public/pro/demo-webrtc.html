@@ -268,6 +268,7 @@
             isWebrtcForZLM: $isWebrtcForZLM.checked === true,
             webrtcForZLMByWhipWhep: $webrtcForZLMByWhipWhep.checked === true,
             isEmitSEI: $isEmitSEI.checked === true,
+            isDJAiAndParseSeiData:$isEmitSEIForDJI.checked === true,
             isWebrtcForSRS: $isWebrtcForSRS.checked === true,
             webrtcForSRSBySDK: $webrtcForSRSBySDK.checked === true,
             webrtcForSRSByWhipWhep: $webrtcForSRSByWhipWhep.checked === true,
@@ -296,58 +297,40 @@
         })
 
         jessibuca.on('videoSEISyncPts', (value) => {
-            console.log('videoSEISyncPts', value);
+            // console.log('videoSEISyncPts', value);
 
             if ($isEmitSEIForDJI.checked === true) {
-                const result = SEIParser.parse(value.originData);
+                const djSeiList = data.djSeiList;
 
-                result.forEach((item) => {
-                    const parsedData = item.parsedData;
-
-                    if (parsedData && parsedData.ai_data) {
-                        const aiData = parsedData.ai_data;
-                        const contentArray = [];
-                        aiData.obj_groups.forEach((group) => {
-                            if (group.group_type === 10 && group.objects && group.objects.length > 0) {
-                                group.objects.forEach((item) => {
-                                    // 只展示类型为2、3、4的检测框（人、车、船）
-                                    if (![2, 3, 4].includes(item.type)) {
-                                        return;
-                                    }
-                                    const videoInfo = jessibuca.getVideoInfo();
-                                    const videoNaturalWidth = videoInfo.width;
-                                    const videoNaturalHeight = videoInfo.height;
-                                    const originalCenterX = (item.cx / 10000) * videoNaturalWidth;
-                                    const originalCenterY = (item.cy / 10000) * videoNaturalHeight;
-                                    const originalWidth = (item.w / 10000) * videoNaturalWidth;
-                                    const originalHeight = (item.h / 10000) * videoNaturalHeight;
-                                    // 计算矩形左上角坐标
-                                    const x = originalCenterX - originalWidth / 2;
-                                    const y = originalCenterY - originalHeight / 2;
-                                    // 框子
-                                    contentArray.push({
-                                        type: 'rect',
-                                        x: x,
-                                        y: y,
-                                        width: originalWidth,
-                                        height: originalHeight,
-                                        color: '#FF0000',
-                                    })
-                                    // 文字
-                                    contentArray.push({
-                                        type: 'text',
-                                        x: x + 5,
-                                        y: y - 18,
-                                        text: `${item.type_name} (${item.distance} mm)`,
-                                        font: '16',
-                                        color: '#00FF00',
-                                    })
-                                });
-                            }
+                if (djSeiList && djSeiList.length > 0) {
+                    const contentArray = [];
+                    djSeiList.forEach((seiData) => {
+                        // 框子
+                        contentArray.push({
+                            type: 'rect',
+                            x: seiData.x,
+                            y: seiData.y,
+                            width: seiData.originalWidth,
+                            height: seiData.originalHeight,
+                            color: '#FF0000',
                         })
-                        jessibuca.addContentToCanvas(contentArray)
-                    }
-                })
+                        // 文字
+                        contentArray.push({
+                            type: 'text',
+                            x: seiData.x + 5,
+                            y: seiData.y - 18,
+                            text: `${seiData.type_name} (${seiData.distance} mm)`,
+                            font: '16',
+                            color: '#00FF00',
+                        })
+                    })
+                    jessibuca.addContentToCanvas(contentArray)
+                } else {
+                    jessibuca.addContentToCanvas([]);
+                }
+            } else {
+                //
+                console.log('videoSEISyncPts', value);
             }
         })
 
@@ -506,7 +489,7 @@
         }
     })
 
-    if(supportWebrtcH265()) {
+    if (supportWebrtcH265()) {
         $supportWebrtcH265.style.display = 'inline-block';
         $notSupportWebrtcH265.style.display = 'none';
     } else {
