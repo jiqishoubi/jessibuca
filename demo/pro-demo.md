@@ -195,6 +195,18 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-hls.html](http://jessibuca.monibuca.com/pro/play-vod-demo-hls.html)
 
+### hls-ts demo（支持逐帧播放，逐关键帧(I帧)播放，切换通道, 4k25P(硬解码+软解码)，支持seek）
+
+------
+#### https
+
+[https://jessibuca.com/pro/play-vod-demo-hls-ts.html](https://jessibuca.com/pro/play-vod-demo-hls-ts.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/play-vod-demo-hls-ts.html](http://jessibuca.monibuca.com/pro/play-vod-demo-hls-ts.html)
+
+
+
 ### flv demo（支持逐帧播放，逐关键帧(I帧)播放，4k25P(硬解码+软解码)，不支持支持seek）
 
 ------
@@ -226,6 +238,14 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [http://jessibuca.monibuca.com/pro/play-vod-demo-ps.html](http://jessibuca.monibuca.com/pro/play-vod-demo-ps.html)
 
 
+### ts demo （支持逐帧播放，逐关键帧(I帧)播放，切换通道，4k25P(硬解码+软解码)，不支持支持seek）
+------
+#### https
+
+[https://jessibuca.com/pro/play-vod-demo-ts.html](https://jessibuca.com/pro/play-vod-demo-ts.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/play-vod-demo-ts.html](http://jessibuca.monibuca.com/pro/play-vod-demo-ts.html)
 
 ### m7s加密demo
 ------
@@ -236,8 +256,6 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-crypto-m7s.html](http://jessibuca.monibuca.com/pro/play-vod-demo-crypto-m7s.html)
 
-
-
 ### sm4加密demo
 ------
 #### https
@@ -246,7 +264,6 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 
 #### http
 [http://jessibuca.monibuca.com/pro/play-vod-demo-crypto-sm4.html](http://jessibuca.monibuca.com/pro/play-vod-demo-crypto-sm4.html)
-
 
 ### xor加密demo
 ------
@@ -285,7 +302,6 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 [https://jessibuca.com/pro/talk-demo.html](https://jessibuca.com/pro/talk-demo.html)
 #### http
 [http://jessibuca.monibuca.com/pro/talk-demo.html](http://jessibuca.monibuca.com/pro/talk-demo.html)
-
 
 ## 其他
 
