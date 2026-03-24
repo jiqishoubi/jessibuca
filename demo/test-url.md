@@ -164,6 +164,7 @@ https://voddemo-play.volcvod.com/8d1417d814b24fee8b8b0c2747f303e5/main.m3u8?a=0&
 
 https://cdn-static.m-m10010.com/demo/hls/output.m3u8
 
+
 ### flv
 
 #### h264
@@ -206,6 +207,14 @@ https://artplayer.org/assets/sample/video.mp4
 920 * 400  ------- videojs使用的测试文件
 
 https://vjs.zencdn.net/v/oceans.mp4
+
+
+640 * 360 -------
+https://d2zihajmogu5jn.cloudfront.net/elephantsdream/ed_hd.mp4
+
+
+960 * 540 -------
+https://cdn.zwplayer.cn/media/VMAP9lxJvRpgn5sP3lV6rQ9qkzQmh5psggso3185.mp4
 
 测试地址
 
