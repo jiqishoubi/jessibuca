@@ -1154,7 +1154,6 @@ Access to fetch at 'http://192.168.0.2:8000/live/test.flv' from origin 'http://j
 只支持内嵌 webview 模式播放。
 
 ### 关于超低延迟(300ms)以内
-
 目前想要超低延迟，只能使用wasm解码。目前开源版的超低延迟最多只能支持到`1s`以内
 
 推荐的配置
@@ -1937,6 +1936,8 @@ useWCS:false
 
 > 由于webview的限制，无法像浏览器那样直接截图，或者录制视频可以通过a.download 下载。
 
+> 暂不支持微信/飞书的webview 环境下录制视频下载。
+
 解决方案：
 
 对于截图：
@@ -1952,7 +1953,21 @@ useWCS:false
 
 > pro版本支持录制视频返回`blob`格式。 可以通过`jsbridge`传给app，app再通过`blob`转成视频，然后保存到本地。
 
-> XX小程序可以通过`postMessage` 将blob转换成ArrayBuffer传给小程序，小程序再通过系统级别api保存到本地。
+> XX小程序可以通过`postMessage` 将blob转换成ArrayBuffer传给小程序，小程序再通过系统级别api(wx.writeFile)保存到本地。
+
+
+### 飞书/微信/其他 webview h5 环境下实现截图下载或者录制视频下载。
+
+> 同样是禁用了a标签的下载功能，所以无法通过a标签的download属性来实现下载了。
+
+#### 图片
+
+直接用 `<img src="base64">` 弹出浮层，提示用户长按保存，这在所有 WebView 中都可靠工作
+
+#### 视频
+
+由于 Blob 体积大且 WebView 限制多，最稳妥的方案是走服务端中转：上传 Blob → 返回临时 URL → window.location.href = url 触发浏览器原生下载行为。
+
 
 ### 火狐(firefox)，chrome，等浏览器报ws地址连接不上
 
