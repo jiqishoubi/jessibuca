@@ -76,44 +76,6 @@
         </div>
         <div class="input">
             <div>
-                <span>(H264/H265)解封装器：</span>
-                <input
-                    checked
-                    type="checkbox"
-                    id="h264DemuxType1"
-                /><span>V1</span>
-                <input
-                    type="checkbox"
-                    id="h264DemuxType2"
-                /><span>V2</span>
-                <span>(v1版本兼容性更强，v2版本性能更强)</span>
-            </div>
-        </div>
-        <div class="input">
-
-            <div>
-                <span>H265解封装器：</span>
-                <input
-                    checked
-                    type="checkbox"
-                    id="h265DemuxType1"
-                /><span>V1</span>
-                <input
-                    type="checkbox"
-                    id="h265DemuxType2"
-                /><span>V2</span>
-                <span>(v1版本兼容性更强，v2版本性能更强)</span>
-            </div>
-        </div>
-        <div class="input">
-            <div>
-                测试地址：<br>
-                <span style="color: red">h265:</span> ws://47.106.101.70:6702?type=h265_2k_raw <br>
-                <span style="color: red">h264:</span> ws://47.106.101.70:6702?type=h264_360_mdraw
-            </div>
-        </div>
-        <div class="input">
-            <div>
                 <input
                     checked
                     onclick="replay()"
@@ -150,8 +112,6 @@
 </div>
 <script src="./demo.js"></script>
 <script>
-    ;
-
     var $player = document.getElementById('play');
     var $pause = document.getElementById('pause');
     var $playHref = document.getElementById('playUrl');
@@ -162,10 +122,6 @@
     var $useSIMD = document.getElementById('useSIMD');
     var $useWCS = document.getElementById('useWCS');
     var $fps = document.getElementById('fps');
-    var $h265DemuxType1 = document.getElementById('h265DemuxType1');
-    var $h265DemuxType2 = document.getElementById('h265DemuxType2');
-    var $h264DemuxType1 = document.getElementById('h264DemuxType1');
-    var $h264DemuxType2 = document.getElementById('h264DemuxType2');
     var $videoBuffer = document.getElementById('videoBuffer');
     var $videoBufferDelay = document.getElementById('videoBufferDelay');
     var $isNakedFlow = document.getElementById('isNakedFlow');
@@ -208,8 +164,6 @@
             forceNoOffscreen: forceNoOffscreen,
             isNotMute: false,
             heartTimeout: 10,
-            nakedFlowH265DemuxUseNew: $h265DemuxType2.checked === true,
-            nakedFlowDemuxUseNew:$h264DemuxType1.checked === true,
             // demuxUseWorker:false,
             // checkFirstIFrame:false,
         },);
@@ -326,36 +280,6 @@
         replay();
     })
 
-    $h265DemuxType1.addEventListener('click', function () {
-        const checked = $h265DemuxType1.checked;
-        if (checked) {
-            $h265DemuxType2.checked = false;
-        }
-        replay();
-    })
-    $h265DemuxType2.addEventListener('click', function () {
-        const checked = $h265DemuxType2.checked;
-        if (checked) {
-            $h265DemuxType1.checked = false;
-        }
-        replay();
-    })
-
-    $h264DemuxType1.addEventListener('click', function () {
-        const checked = $h264DemuxType1.checked;
-        if (checked) {
-            $h264DemuxType2.checked = false;
-        }
-        replay();
-    })
-
-    $h264DemuxType2.addEventListener('click', function () {
-        const checked = $h264DemuxType2.checked;
-        if (checked) {
-            $h264DemuxType1.checked = false;
-        }
-        replay();
-    })
 
 
     $fps.addEventListener('change', function () {
