@@ -13,6 +13,7 @@ module.exports = {
                     {text: '文档', link: '/document'},
                     {text: 'Demo', link: '/demo'},
                     {text: '测试地址', link: '/test-url'},
+                    {text: 'HTTP(ws) 流媒体下载器', link: 'https://jessibuca.com/download-utils.html'},
                     {text: '文章分享系列', link: 'https://juejin.cn/user/1345457961842126/posts'},
                 ]
             },

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>HTTP(ws)-FLV 下载器</title>
+    <title>HTTP(ws) 流媒体下载器</title>
     <style>
         * {
             margin: 0;
@@ -36,6 +36,29 @@
             text-align: center;
         }
 
+        h3 {
+            font-size: 16px;
+            color: #cf1322;
+            margin-bottom: 8px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        #currentEnvTips{
+            text-align: left;
+            font-size: 14px;
+            color: #a8071a;
+            background: #fff1f0;
+            border: 1px solid #ffa39e;
+            border-left: 4px solid #ff4d4f;
+            border-radius: 8px;
+            padding: 12px 14px;
+            line-height: 1.7;
+            white-space: pre-line;
+            margin-bottom: 24px;
+
+        }
+
         .form-group {
             margin-bottom: 16px;
         }
@@ -47,7 +70,8 @@
             margin-bottom: 6px;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 10px 14px;
             border: 1px solid #d9d9d9;
@@ -55,11 +79,64 @@
             font-size: 14px;
             outline: none;
             transition: border-color 0.2s;
+            background: #fff;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             border-color: #1890ff;
         }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .format-tag {
+            display: inline-block;
+            background: #e6f7ff;
+            color: #1890ff;
+            border: 1px solid #91d5ff;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .env-switch {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn-env {
+            padding: 8px 20px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #fff;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .btn-env:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .btn-env.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
 
         .btn-group {
             display: flex;
@@ -180,16 +257,39 @@
 </head>
 <body>
 <div class="container">
-    <h1>📥 HTTP-FLV 下载器</h1>
+    <h1>📥 HTTP(ws) 流媒体下载器</h1>
 
-    <div class="form-group">
-        <label for="urlInput">FLV 播放地址（支持 http-flv / ws-flv）</label>
-        <input id="urlInput" type="text" placeholder="http(s)://host/live/stream.flv 或 ws(s)://host/live/stream.flv" />
+    <h3 id="currentEnv"></h3>
+    <p id="currentEnvTips"></p>
+    <div class="env-switch">
+        <button class="btn-env" id="btnHttps" onclick="switchEnv('https')">切换到 HTTPS 环境</button>
+        <button class="btn-env" id="btnHttp" onclick="switchEnv('http')">切换到 HTTP 环境</button>
     </div>
 
     <div class="form-group">
-        <label for="filenameInput">导出文件名</label>
-        <input id="filenameInput" type="text" placeholder="record.flv" value="record.flv" />
+        <label for="urlInput">播放地址（支持 http(s) / ws(s)）</label>
+        <input id="urlInput" type="text" placeholder="http(s)://host/live/stream 或 ws(s)://host/live/stream"/>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="filenameInput">导出文件名</label>
+            <input id="filenameInput" type="text" placeholder="record.flv" value="record.flv"/>
+        </div>
+        <div class="form-group">
+            <label for="formatSelect">保存格式 <span class="format-tag" id="autoDetectTag"
+                                                     style="display:none">自动识别</span></label>
+            <select id="formatSelect">
+                <option value="flv">FLV (.flv)</option>
+                <option value="mp4">MP4 (.mp4)</option>
+                <option value="ts">TS (.ts)</option>
+                <option value="h264">H.264 裸流 (.h264)</option>
+                <option value="h265">H.265 裸流 (.h265)</option>
+                <option value="aac">AAC 音频 (.aac)</option>
+                <option value="pcm">PCM 音频 (.pcm)</option>
+                <option value="bin">原始数据 (.bin)</option>
+            </select>
+        </div>
     </div>
 
     <div class="btn-group">
@@ -226,6 +326,8 @@
 <script>
     const urlInput = document.getElementById('urlInput');
     const filenameInput = document.getElementById('filenameInput');
+    const formatSelect = document.getElementById('formatSelect');
+    const autoDetectTag = document.getElementById('autoDetectTag');
     const btnStart = document.getElementById('btnStart');
     const btnStop = document.getElementById('btnStop');
     const btnExport = document.getElementById('btnExport');
@@ -244,6 +346,67 @@
     let timerInterval = null;
     let startTime = null;
     let downloading = false;
+
+    // 格式配置：扩展名、MIME 类型、显示名称
+    const FORMAT_CONFIG = {
+        flv: {ext: '.flv', mime: 'video/x-flv', label: 'FLV'},
+        mp4: {ext: '.mp4', mime: 'video/mp4', label: 'MP4'},
+        ts: {ext: '.ts', mime: 'video/mp2t', label: 'TS'},
+        h264: {ext: '.h264', mime: 'application/octet-stream', label: 'H.264 裸流'},
+        h265: {ext: '.h265', mime: 'application/octet-stream', label: 'H.265 裸流'},
+        aac: {ext: '.aac', mime: 'audio/aac', label: 'AAC 音频'},
+        pcm: {ext: '.pcm', mime: 'application/octet-stream', label: 'PCM 音频'},
+        bin: {ext: '.bin', mime: 'application/octet-stream', label: '原始数据'},
+    };
+
+    // 从 URL 自动识别格式
+    function detectFormatFromURL(url) {
+        try {
+            // 去除查询参数和 hash，取路径部分
+            const pathname = new URL(url, 'http://dummy').pathname.toLowerCase();
+            for (const [fmt, cfg] of Object.entries(FORMAT_CONFIG)) {
+                if (pathname.endsWith(cfg.ext)) return fmt;
+            }
+            // 额外匹配：有些 URL 路径中带有格式关键字
+            if (/\.264$/.test(pathname)) return 'h264';
+            if (/\.265$/.test(pathname) || /\.hevc$/.test(pathname)) return 'h265';
+        } catch (_) {
+        }
+        return null;
+    }
+
+    // 获取当前选中的格式配置
+    function getSelectedFormat() {
+        return FORMAT_CONFIG[formatSelect.value] || FORMAT_CONFIG.bin;
+    }
+
+    // 同步文件名：保留用户输入的主名，替换扩展名
+    function syncFilename() {
+        const fmt = getSelectedFormat();
+        const current = filenameInput.value.trim();
+        // 去掉旧扩展名
+        const baseName = current.replace(/\.[^.]+$/, '') || 'record';
+        filenameInput.value = baseName + fmt.ext;
+    }
+
+    // URL 变更时自动检测格式
+    urlInput.addEventListener('input', () => {
+        const url = urlInput.value.trim();
+        const detected = detectFormatFromURL(url);
+        if (detected) {
+            formatSelect.value = detected;
+            autoDetectTag.style.display = 'inline-block';
+            syncFilename();
+        } else {
+            autoDetectTag.style.display = 'none';
+        }
+    });
+
+    // 格式下拉变更时同步文件名
+    formatSelect.addEventListener('change', () => {
+        autoDetectTag.style.display = 'none';
+        syncFilename();
+    });
 
     // 判断是否是 WebSocket 地址
     function isWebSocketURL(url) {
@@ -271,7 +434,7 @@
 
     // 获取当前时间字符串
     function nowStr() {
-        return new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        return new Date().toLocaleTimeString('zh-CN', {hour12: false});
     }
 
     // 追加日志
@@ -292,6 +455,7 @@
             btnStop.disabled = false;
             btnExport.disabled = true;
             urlInput.disabled = true;
+            formatSelect.disabled = true;
             statusText.textContent = '下载中...';
             statusText.className = 'value downloading';
         } else if (state === 'stopped') {
@@ -299,6 +463,7 @@
             btnStop.disabled = true;
             btnExport.disabled = chunks.length === 0;
             urlInput.disabled = false;
+            formatSelect.disabled = false;
             statusText.textContent = '已停止';
             statusText.className = 'value stopped';
         } else {
@@ -306,6 +471,7 @@
             btnStop.disabled = true;
             btnExport.disabled = true;
             urlInput.disabled = false;
+            formatSelect.disabled = false;
             statusText.textContent = '未开始';
             statusText.className = 'value idle';
         }
@@ -347,11 +513,11 @@
         addLog(`下载结束，总大小: ${formatSize(totalBytes)}`, 'info');
     }
 
-    // ========== HTTP-FLV 下载（fetch + ReadableStream） ==========
-    async function startHttpFlv(url) {
+    // ========== HTTP 下载（fetch + ReadableStream） ==========
+    async function startHttpDownload(url) {
         abortController = new AbortController();
         try {
-            const res = await fetch(url, { signal: abortController.signal });
+            const res = await fetch(url, {signal: abortController.signal});
             if (!res.ok) {
                 throw new Error(`HTTP ${res.status} ${res.statusText}`);
             }
@@ -360,7 +526,7 @@
             startTimer();
 
             while (true) {
-                const { done, value } = await reader.read();
+                const {done, value} = await reader.read();
                 if (done) {
                     addLog('流已结束（服务端关闭）', 'info');
                     break;
@@ -379,8 +545,8 @@
         }
     }
 
-    // ========== WS-FLV 下载（WebSocket） ==========
-    function startWsFlv(url) {
+    // ========== WebSocket 下载 ==========
+    function startWsDownload(url) {
         return new Promise((resolve) => {
             const ws = new WebSocket(url);
             ws.binaryType = 'arraybuffer';
@@ -406,7 +572,7 @@
                 }
             };
 
-            ws.onerror = (e) => {
+            ws.onerror = () => {
                 addLog(`WebSocket 出错`, 'info');
             };
 
@@ -428,9 +594,18 @@
     async function startDownload() {
         const url = urlInput.value.trim();
         if (!url) {
-            alert('请输入 FLV 地址');
+            alert('请输入播放地址');
             return;
         }
+
+        const checkUrlResult = checkUrlIsValid(url);
+
+        if (checkUrlResult.result === false) {
+            alert(checkUrlResult.msg);
+            return;
+        }
+
+        const fmt = getSelectedFormat();
 
         // 重置
         chunks = [];
@@ -446,24 +621,25 @@
 
         setUIState('downloading');
 
+        const protocol = isWebSocketURL(url) ? 'WebSocket' : 'HTTP';
+        addLog(`开始下载 [${fmt.label}] (${protocol}): ${url}`, 'info');
+
         if (isWebSocketURL(url)) {
-            addLog(`开始下载 (WS-FLV): ${url}`, 'info');
-            await startWsFlv(url);
+            await startWsDownload(url);
         } else {
-            addLog(`开始下载 (HTTP-FLV): ${url}`, 'info');
-            await startHttpFlv(url);
+            await startHttpDownload(url);
         }
     }
 
     // 停止下载
     function stopDownload() {
         downloading = false;
-        // HTTP-FLV
+        // HTTP
         if (abortController) {
             abortController.abort();
             abortController = null;
         }
-        // WS-FLV
+        // WebSocket
         if (wsInstance) {
             wsInstance.close();
             wsInstance = null;
@@ -477,8 +653,9 @@
             return;
         }
 
-        const filename = filenameInput.value.trim() || 'record.flv';
-        const blob = new Blob(chunks, { type: 'video/x-flv' });
+        const fmt = getSelectedFormat();
+        const filename = filenameInput.value.trim() || ('record' + fmt.ext);
+        const blob = new Blob(chunks, {type: fmt.mime});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = filename;
@@ -486,6 +663,88 @@
         URL.revokeObjectURL(a.href);
         addLog(`文件已导出: ${filename}（${formatSize(blob.size)}）`, 'info');
     }
+
+    // ===== 环境切换（跳转当前页面到对应协议的地址） =====
+    const ENV_URLS = {
+        https: 'https://jessibuca.com/download-utils.html',
+        http: 'http://jessibuca.monibuca.com/download-utils.html',
+    };
+
+    function switchEnv(env) {
+        const url = ENV_URLS[env];
+        if (url && window.location.href !== url) {
+            window.location.href = (url) + '?t=' + new Date().getTime();
+        }
+    }
+
+    function isLocalEnvironment() {
+        const host = window.location.hostname;
+        return host === 'localhost' || /^127\./.test(host) || host === '::1';
+    }
+
+    // 根据当前页面协议高亮对应按钮
+    (function initEnvButtons() {
+        const isHttps = window.location.protocol === 'https:';
+        const isLocal = isLocalEnvironment();
+        const envSwitch = document.querySelector('.env-switch');
+        const btnHttpsEnv = document.getElementById('btnHttps');
+        const btnHttpEnv = document.getElementById('btnHttp');
+        document.getElementById('currentEnv').textContent = isHttps ? '当前环境：HTTPS' : '当前环境：HTTP';
+        let tips = '提示：请确保输入的 URL 协议与当前页面协议匹配，否则会触发跨域错误。';
+
+        if (isLocal) {
+            tips = '提示：当前页面处于本地环境（localhost / 127.* / ::1）。\n此环境下可自由使用 HTTP、HTTPS、WS 或 WSS 地址，不受当前页面协议限制。';
+            envSwitch.style.display = 'none';
+        } else if (isHttps) {
+            tips += '\n当前页面为 HTTPS 协议，URL 必须使用 HTTPS 或 WSS 协议。';
+            envSwitch.style.display = 'flex';
+            btnHttpsEnv.style.display = 'none';
+            btnHttpEnv.style.display = 'inline-block';
+        } else {
+            tips += '\n当前页面为 HTTP 协议，URL 必须使用 HTTP 或 WS 协议。';
+            envSwitch.style.display = 'flex';
+            btnHttpsEnv.style.display = 'inline-block';
+            btnHttpEnv.style.display = 'none';
+        }
+
+        document.getElementById('currentEnvTips').textContent = tips;
+
+        if (isLocal) {
+            btnHttpsEnv.style.display = 'none';
+            btnHttpEnv.style.display = 'none';
+        }
+
+    })();
+
+
+    function checkUrlIsValid(url) {
+        // 本地环境不做协议限制
+        if (isLocalEnvironment()) {
+            return {
+                result: true,
+            };
+        }
+
+        // 检查当前页面是https的情况下，url不能是http/ws的
+        if (window.location.protocol === 'https:' && (url.startsWith('http://') || url.startsWith('ws://'))) {
+            return {
+                result: false,
+                msg: `当前页面为HTTPS协议，URL:${url}不能使用HTTP或WS协议，请使用HTTPS或WSS协议`
+            };
+        }
+        // 检查当前页面是http的情况下，url不能是wss/https的
+        if (window.location.protocol === 'http:' && (url.startsWith('wss://') || url.startsWith('https://'))) {
+            return {
+                result: false,
+                msg: `当前页面为HTTP协议，URL:${url}不能使用HTTPS或WSS协议，请使用HTTP或WS协议`
+            };
+        }
+
+        return {
+            result: true,
+        };
+    }
+
 
     btnStart.addEventListener('click', startDownload);
     btnStop.addEventListener('click', stopDownload);
