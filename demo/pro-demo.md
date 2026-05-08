@@ -162,6 +162,14 @@ vue2(单页面):[https://github.com/bosscheng/jessibuca-vue-demo/tree/pro-vue2](
 #### http
 [http://jessibuca.monibuca.com/pro/playback-simple-demo-forward.html](http://jessibuca.monibuca.com/pro/playback-simple-demo-forward.html)
 
+### 回放流倒序播放(需要服务器端配合支持)
+
+#### https
+[https://jessibuca.com/pro/playback-simple-demo-reverse.html](https://jessibuca.com/pro/playback-simple-demo-reverse.html)
+
+#### http
+[http://jessibuca.monibuca.com/pro/playback-simple-demo-reverse.html](http://jessibuca.monibuca.com/pro/playback-simple-demo-reverse.html)
+
 
 ## 点播Demo(支持mse、wcs、wasm、simd)
 

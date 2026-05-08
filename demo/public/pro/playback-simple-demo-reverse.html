@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./demo.css">
     <style>
         .container-shell:before {
-            content: "jessibuca pro 回放流 demo";
+            content: "jessibuca pro 回放流(倒序播放) demo";
         }
     </style>
 </head>
@@ -54,13 +54,6 @@
         <div class="input">
             <div>
                 <div>
-                    <span>硬解码：</span>
-                    <input
-                        type="checkbox"
-                        id="useWCS"
-                    /><span>Webcodec</span>
-                </div>
-                <div>
                     <span>软解码：</span>
                     <input
                         checked
@@ -90,15 +83,6 @@
                         id="isMute"
                     /><span>是否静音播放</span>
                 </div>
-                <div class="input">
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="isIgnoreExceptionFrame"
-                            onclick="replay()"
-                        /><span>是否跳过花屏\灰色\拖拉\半截不全的画面（wasm和webcodec支持）</span>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="input">
@@ -118,9 +102,12 @@
         </div>
         <div class="input">
             <div>
-                <div>
-                    测试地址：https://artplayer.org/assets/sample/video.flv
-                </div>
+                <span style="color: red">tips:</span> 倒序功能需要服务器端支持按照gop倒序推流，客户端才能倒序播放。单独跑是没啥任何效果的。
+            </div>
+        </div>
+        <div class="input">
+            <div>
+                <span style="color: red">tips:</span> 服务器端如何推流方案：添加微信：<span style="color: green">bosswancheng</span> 咨询
             </div>
         </div>
         <div class="input">
@@ -139,12 +126,8 @@
             <button id="playbackPause">停止</button>
         </div>
         <div class="input">
-            <button onclick="playbackNextFrame()">逐帧播放</button>
-            <button onclick="playbackExitNextFrameAndPlay()">退出逐帧播放</button>
-        </div>
-        <div class="input">
-            <button onclick="playbackNextIFrame()">逐关键帧(I帧)播放</button>
-            <button onclick="playbackExitNextIFrameAndPlay()">退出逐关键帧(I帧)播放</button>
+            <button onclick="playbackReverse()">倒序播放(需要服务器端配合)</button>
+            <button onclick="playbackExitReverse()">退出倒序播放(需要服务器端配合)</button>
         </div>
         <div class="input" style="line-height: 30px">
             <button id="destroy">销毁</button>
@@ -154,7 +137,6 @@
 <script src="./demo.js"></script>
 
 <script>
-    ;
 
     var $player = document.getElementById('play');
     var $playbackPause = document.getElementById('playbackPause');
@@ -163,12 +145,10 @@
     var $destroy = document.getElementById('destroy');
     var $useSIMD = document.getElementById('useSIMD');
     var $isFFmpegSIMD = document.getElementById('isFFmpegSIMD');
-    var $useWCS = document.getElementById('useWCS');
     var $useSIMDMThreading = document.getElementById('useSIMDMThreading');
     var $demuxUseWorker = document.getElementById('demuxUseWorker');
     var $isFlv = document.getElementById('isFlv');
     var $isMute = document.getElementById('isMute');
-    var $isIgnoreExceptionFrame = document.getElementById('isIgnoreExceptionFrame');
 
     var forceNoOffscreen = true; //
     var jessibuca = null;
@@ -215,7 +195,6 @@
                     {label: '14倍', value: 14},
                     {label: '16倍', value: 16},
                 ],
-                useWCS: $useWCS.checked,
                 useMSE: false,
                 useSIMD: $useSIMD.checked,
             },
@@ -223,7 +202,6 @@
             demuxUseWorker: $demuxUseWorker.checked === true,
             isFlv: $isFlv.checked === true,
             isSpecialPlaybackVod: true,
-            isIgnoreExceptionFrame: $isIgnoreExceptionFrame.checked === true,
         },);
 
         $player.style.display = 'inline-block';
@@ -317,52 +295,24 @@
 
     })
 
-    $useSIMD.addEventListener('click', function () {
-        const checked = $useSIMD.checked;
-        if (checked) {
-            $useWCS.checked = false
-        }
-        replay();
-    })
 
-    $useWCS.addEventListener('click', function () {
-        const checked = $useWCS.checked;
-        if (checked) {
-            $useSIMD.checked = false;
-            $isFFmpegSIMD.checked = false;
-        }
-        replay();
-    })
 
-    function playbackNextFrame(){
-        if (jessibuca) {
-            jessibuca.playbackNextFrame();
-        }
-    }
-
-    function playbackExitNextFrameAndPlay(){
-        if (jessibuca) {
-            jessibuca.playbackExitNextFrameAndPlay();
-        }
-    }
-
-    function playbackNextIFrame(){
-        if (jessibuca) {
-            jessibuca.playbackNextIFrame();
-        }
-    }
-
-    function playbackExitNextIFrameAndPlay() {
-        if (jessibuca) {
-            jessibuca.playbackExitNextIFrameAndPlay();
-        }
-    }
 
     function replayBySThreading() {
         $useSIMDMThreading.checked = false;
         replay();
     }
 
+
+    function playbackReverse() {
+        // todo: 需要先发送ajax请求到流媒体服务器端，告知倒序推流。 如果单独调用没啥用。
+        jessibuca.playbackReverse();
+    }
+
+    function playbackExitReverse() {
+        // todo: 需要先发送ajax请求到流媒体服务器端，告知停止倒序推流。 如果单独调用没啥用。
+        jessibuca.playbackExitReverse();
+    }
 
 </script>
 

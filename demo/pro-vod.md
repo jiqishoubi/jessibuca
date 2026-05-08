@@ -15,45 +15,13 @@
 
 ## MP4放进去以后一直加载不成功怎么办（有报错信息）
 
-> 播放器会报：“cannot find moov or mdat box” 错误
+###  播放器会报：“cannot find moov or mdat box” 错误
 
 检查下文件格式是否正确：目前遇到了海康的NVR录制的MP4文件，使用ffmpeg查看了一下，其实不是MP4格式的文件，文件头是MP4的，但是实际内容是PS格式的。用Mp4Box.js解析的时候会报错。
 
 
 
-
-确认moov box 是否在mdat box之前
-
-> 其实就是按照fmp4格式封装就行了。
-
-
-使用FFMpeg 确定 moov位置:
-
-```
-ffprobe 视频.mp4 -v trace 2>&1 | grep 'mdat\|moov'
-```
-
-输出如下，type:'moov' 在 type:'mdat'之前就是正常的，否则就是错误。
-
-```
-[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fd30d004400] type:'moov' parent:'root' sz: 7993 36 815638
-[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fd30d004400] type:'mvhd' parent:'moov' sz: 108 8 7985
-[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fd30d004400] type:'trak' parent:'moov' sz: 5480 116 7985
-[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fd30d004400] type:'trak' parent:'moov' sz: 2268 5596 7985
-[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fd30d004400] type:'udta' parent:'moov' sz: 129 7864 7985
-[mov,mp4,m4a,3gp,3g2,mj2 @ 0x7fd30d004400] type:'mdat' parent:'root' sz: 807609 8037 815638
-```
-
-解决方法
-
-mp4 将moov box前置（不转码方法）
-
-```
-ffmpeg -i input.mp4 -vcodec copy -acodec copy -movflags faststart -y output.mp4
-```
-
-大体确定MOOV的范围 调整coreProbePart参数大小(0-1 = 0%-100%)
-
+### 报错：“Could not find tag for codec pcm_alaw in stream #1, codec not currently supported in container”
 如果出现了报错：
 
 ```
@@ -68,10 +36,6 @@ ffmpeg -i input.mp4 -vcodec copy -acodec copy -movflags faststart -y output.mp4
 ./ffmpeg -i input.mp4 -vcodec copy -acodec aac -movflags faststart -y output.mp4
 
 ```
-
-见图
-<img src="/public/img/vod-coreProbePart.png">
-
 
 
 ## MP4放进去以后一直加载不成功怎么办（无报错信息）
