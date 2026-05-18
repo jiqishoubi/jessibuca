@@ -3148,6 +3148,12 @@ F12 打开控制台 -> 切换到 `Network` 选项卡 -> 勾选`Disable cache` ->
 
 ### 关于如何查看手机端的日志信息并保存下来
 
+#### 通用
+
+可以借助：[pagespy](https://www.pagespy.org/) 来查看手机端的日志信息。
+
+> 需要自己部署，部署之后，手机端和电脑端在同一个局域网下（或者公网），就可以通过电脑端的页面来查看手机端的日志信息了。
+
 #### 安卓
 
 1. 借助安卓chrome浏览器 + window电脑
@@ -3157,7 +3163,6 @@ F12 打开控制台 -> 切换到 `Network` 选项卡 -> 勾选`Disable cache` ->
 - 选择需要调试的设备，点击inspect，即可查看手机端的日志信息
 
 https://blog.csdn.net/Kiruthika/article/details/125335590
-
 
 #### IOS
 
