@@ -168,12 +168,14 @@ export default class CanvasVideoLoader extends CommonLoader {
         if (type === SCREENSHOT_TYPE.base64) {
             return dataURL;
         } else {
-            const file = dataURLToFile(dataURL)
+            const suffix = formatType.split('/')[1];
+            const _fileName = filename + '.' + suffix;
+            const file = dataURLToFile(dataURL, _fileName)
             if (type === SCREENSHOT_TYPE.blob) {
                 return file;
             } else if (type === SCREENSHOT_TYPE.download) {
                 // downloadImg(file, filename);
-                saveAs(file, filename);
+                saveAs(file, _fileName);
             }
         }
 

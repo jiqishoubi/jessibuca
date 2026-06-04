@@ -55,7 +55,7 @@ export function audioContextUnlock(context) {
     }
 }
 
-export function dataURLToFile(dataURL = '') {
+export function dataURLToFile(dataURL = '',fileName = 'file') {
     const arr = dataURL.split(",");
     const bstr = atob(arr[1]);
     const type = arr[0].replace("data:", "").replace(";base64", "")
@@ -63,7 +63,7 @@ export function dataURLToFile(dataURL = '') {
     while (n--) {
         u8arr[n] = bstr.charCodeAt(n);
     }
-    return new File([u8arr], 'file', {type});
+    return new File([u8arr], fileName, {type});
 }
 
 export function downloadFile(file, fileName) {
