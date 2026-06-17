@@ -671,7 +671,30 @@ AV1硬解目前仅限于AMD RX 6000系（除6500XT）、Nvidia 30系、Intel Arc
 
 1. 开启HEVC之前需要下载HEVC插件，这个插件可以在微软商店花7块钱购买。
 
-搜索：HEVC视频扩展
+搜索：HEVC视频扩展（打开Microsoft Store，检索HEVC视频扩展插件，获取HEVC插件URL链接。）
+
+- 打开Microsoft Store，检索HEVC视频扩展插件，获取HEVC插件URL链接。
+- 打开以下链接，在URL（link）输入框中填入在Microsoft Store拿到的插件URL即可。
+
+
+
+<img src="/public/img/hevc-download.png">
+
+打开Microsoft Store网页版地址。然后把地址复制出来
+
+<img src="/public/img/microsoft-store.png">
+
+打开这个地址：
+> https://store.rg-adguard.net/
+
+然后把“Microsoft Store网页版地址” 复制进去，然后搜索，进行下载就行了。
+
+<img src="/public/img/hevc-download-2.png">
+
+可下载的资源
+
+<img src="/public/img/hevc-download-3.png">
+
 
 2. 也可以直接在网上免费下载，两者都是一样的。
    HEVC视频拓展下载地址：https://www.free-codecs.com/hevc_video_extension_download.htm
