@@ -737,6 +737,8 @@ GA/T 1078 TF卡（录像流）流播放 [介绍](https://jessibuca.com/pro-playb
 
 !!! 如果电脑的解码性能跟不上，可能会导致解码数据堆积，内存会一直上涨，导致网页崩溃。!!!
 
+如果想要测试当前显示器的最大支持路数，可以测试[测试地址](https://jessibuca.com/check-max-play-multi-size.html)
+
 ### N卡官方对视频并发解码路数有限制
 
 使用N卡进行视频编解码有着并发数的限制，https://developer.nvidia.com/video-encode-decode-gpu-support-matrix#Encoder，可以看到，GeForce

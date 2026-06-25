@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>并发播放路数推荐 · checkEnvironment</title>
+    <style>
+        :root {
+            --bg: #0f1419;
+            --panel: #1a212b;
+            --border: #2a3441;
+            --text: #d6deeb;
+            --muted: #8b98a9;
+            --accent: #4fb3ff;
+            --green: #57d9a3;
+            --red: #ff6b6b;
+            --yellow: #ffd166;
+            --page-width: 920px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html {
+            min-height: 100%;
+            background: var(--bg);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(79, 179, 255, 0.12), transparent),
+                var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", Segoe UI, sans-serif;
+            line-height: 1.6;
+            padding: 32px 20px 48px;
+        }
+
+        .page {
+            width: 100%;
+            max-width: var(--page-width);
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 0 8px;
+            letter-spacing: 0.02em;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 0 auto;
+            max-width: 560px;
+            font-size: 14px;
+        }
+
+        .note {
+            border: 1px solid rgba(79, 179, 255, 0.25);
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: rgba(79, 179, 255, 0.06);
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .note code {
+            color: var(--accent);
+            font-size: 12px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .panel h2 {
+            font-size: 15px;
+            margin: 0 0 14px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 720px) {
+            .hero { grid-template-columns: 1fr; }
+        }
+
+        .params-panel select {
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        select, button {
+            font: inherit;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #0c1116;
+            color: var(--text);
+            padding: 10px 14px;
+        }
+
+        select:focus, button:focus {
+            outline: 2px solid rgba(79, 179, 255, 0.4);
+            outline-offset: 1px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        .checkbox-row label {
+            margin: 0;
+            color: var(--text);
+        }
+
+        .btn-run {
+            width: 100%;
+            margin-top: 16px;
+            background: var(--accent);
+            color: #041018;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.15s;
+        }
+
+        .btn-run:hover:not(:disabled) { filter: brightness(1.08); }
+        .btn-run:disabled { opacity: 0.65; cursor: wait; }
+
+        .result-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 180px;
+        }
+
+        .result-big {
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--green);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .result-big small {
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        .result-meta {
+            margin: 14px 0 0;
+            font-size: 13px;
+            color: var(--muted);
+            max-width: 360px;
+            line-height: 1.7;
+        }
+
+        .result-meta code {
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        .result-meta .warn {
+            display: block;
+            margin-top: 6px;
+            color: var(--yellow);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 720px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 9px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #0c1116;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .y { color: var(--green); font-weight: 600; }
+        .n { color: var(--red); font-weight: 600; }
+        .m { color: var(--yellow); }
+
+        .limit-note {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        pre {
+            margin: 12px 0 0;
+            padding: 14px;
+            background: #0c1116;
+            border-radius: 8px;
+            overflow: auto;
+            font-size: 12px;
+            color: var(--muted);
+            max-height: 420px;
+        }
+
+        details.panel {
+            padding: 16px 20px;
+        }
+
+        details.panel summary {
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: 600;
+            text-align: center;
+            list-style: none;
+        }
+
+        details.panel summary::-webkit-details-marker { display: none; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(79, 179, 255, 0.15);
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <h1>推荐最大并发播放路数</h1>
+        <p class="subtitle">
+            检测 MSE 硬解能力，结合 GPU 解码吞吐、CPU 解封装、多路渲染等维度估算并发上限
+        </p>
+    </header>
+
+
+    <div class="hero">
+        <div class="panel params-panel">
+            <h2>参数</h2>
+            <label for="resolution">分辨率</label>
+            <select id="resolution">
+                <option value="720">720P（2M · 25fps）</option>
+                <option value="1080" selected>1080P（4M · 25fps）</option>
+                <option value="1440">2K / 1440P（8M · 25fps）</option>
+                <option value="2160">4K / 2160P（20M · 25fps）</option>
+            </select>
+            <div class="checkbox-row">
+                <input type="checkbox" id="hasH265">
+                <label for="hasH265">播放流包含 H.265</label>
+            </div>
+            <button id="btnRun" class="btn-run">检测并计算</button>
+        </div>
+
+        <div class="panel result-panel">
+            <h2 style="align-self:stretch;text-align:left">推荐结果</h2>
+            <div id="resultBox">
+                <div class="result-big">—<small>点击「检测并计算」</small></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>各维度上限</h2>
+        <table id="limitsTable">
+            <thead>
+            <tr><th>维度</th><th>上限路数</th><th>状态</th></tr>
+            </thead>
+            <tbody><tr><td colspan="3" style="color:var(--muted)">等待检测…</td></tr></tbody>
+        </table>
+    </div>
+
+    <div class="layout">
+        <div class="panel">
+            <h2>MSE 编解码</h2>
+            <table id="codecTable">
+                <thead><tr><th>编码</th><th>支持</th><th>硬解</th><th>流畅</th></tr></thead>
+                <tbody><tr><td colspan="4" style="color:var(--muted)">等待检测…</td></tr></tbody>
+            </table>
+        </div>
+        <div class="panel">
+            <h2>硬件估算</h2>
+            <table id="hwTable">
+                <tbody><tr><td colspan="2" style="color:var(--muted)">等待检测…</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <details class="panel">
+        <summary>完整诊断 JSON</summary>
+        <pre id="jsonOut">// 等待检测…</pre>
+    </details>
+</div>
+
+<script>
+    // ── concurrent-streams（内嵌） ──────────────────────────────
+
+    const MP4_CODECS = {
+        h264: 'avc1.640028',
+        h264_uhd: 'avc1.640033',
+        h265: 'hvc1.1.6.L120.90',
+        h265_uhd: 'hvc1.1.6.L153.90',
+        h265Alt: 'hev1.1.6.L123.b0',
+    };
+
+    const STREAM_CAPACITY = {
+        wasm: {
+            h265: { 720: { high: 14, mid: 10, low: 6 }, 1080: { high: 6, mid: 4, low: 3 } },
+            h264: { 720: { high: 14, mid: 10, low: 6 }, 1080: { high: 6, mid: 4, low: 3 } },
+        },
+        mse: {
+            h265: { 720: { high: 16, mid: 16, low: 8 }, 1080: { high: 12, mid: 10, low: 4 } },
+            h264: { 720: { high: 32, mid: 32, low: 16 }, 1080: { high: 24, mid: 20, low: 9 } },
+        },
+    };
+
+    const WASM_MEMORY_MB = { 720: 200, 1080: 300, 1440: 550, 2160: 1200 };
+    const CODEC_LOAD = { h264: 1, h265: 1.45 };
+
+    const RESOLUTION_PROFILES = {
+        720: { key: 720, label: '720P', width: 1280, height: 720, pixels: 921_600, bitrate: 2_000_000, fps: 25, h264Codec: MP4_CODECS.h264, h265Codec: MP4_CODECS.h265 },
+        1080: { key: 1080, label: '1080P', width: 1920, height: 1080, pixels: 2_073_600, bitrate: 4_000_000, fps: 25, h264Codec: MP4_CODECS.h264, h265Codec: MP4_CODECS.h265 },
+        1440: { key: 1440, label: '2K', width: 2560, height: 1440, pixels: 3_686_400, bitrate: 8_000_000, fps: 25, h264Codec: MP4_CODECS.h264_uhd, h265Codec: MP4_CODECS.h265_uhd },
+        2160: { key: 2160, label: '4K', width: 3840, height: 2160, pixels: 8_294_400, bitrate: 20_000_000, fps: 25, h264Codec: MP4_CODECS.h264_uhd, h265Codec: MP4_CODECS.h265_uhd },
+    };
+
+    const GPU_PIXEL_BUDGET = {
+        discrete_high: 1_200_000_000,
+        discrete_mid: 450_000_000,
+        discrete_low: 180_000_000,
+        apple_silicon: 900_000_000,
+        integrated: 220_000_000,
+        unknown: 350_000_000,
+    };
+
+    const CPU_DEMUX_COST = { 720: 0.12, 1080: 0.22, 1440: 0.38, 2160: 0.65 };
+    const RENDER_BASE = { high: 36, mid: 20, low: 10 };
+
+    const RESOLUTION_ALIASES = {
+        720: 720, 1080: 1080, 1440: 1440, 2160: 2160,
+        '720p': 720, '1080p': 1080, '2k': 1440, '2K': 1440, '1440p': 1440,
+        '4k': 2160, '4K': 2160, '2160p': 2160, uhd: 2160,
+    };
+
+    function normalizeResolution(resolution) {
+        const raw = resolution ?? 1080;
+        const key = typeof raw === 'string' ? raw.trim() : raw;
+        const mapped = RESOLUTION_ALIASES[key] ?? Number(key);
+        if (!RESOLUTION_PROFILES[mapped]) {
+            throw new RangeError('resolution 仅支持 720、1080、2K(1440)、4K(2160)');
+        }
+        return mapped;
+    }
+
+    function getProfile(resolution) {
+        return RESOLUTION_PROFILES[normalizeResolution(resolution)];
+    }
+
+    function getMediaSourceClass() {
+        if (typeof MediaSource !== 'undefined') return MediaSource;
+        if (typeof ManagedMediaSource !== 'undefined') return ManagedMediaSource;
+        return null;
+    }
+
+    function isTypeSupported(mime) {
+        const MediaSourceClass = getMediaSourceClass();
+        return Boolean(MediaSourceClass && MediaSourceClass.isTypeSupported(mime));
+    }
+
+    function detectMSECodecSupport() {
+        const h264Mime = `video/mp4; codecs="${MP4_CODECS.h264}"`;
+        const h265Mimes = [
+            `video/mp4; codecs="${MP4_CODECS.h265}"`,
+            `video/mp4; codecs="${MP4_CODECS.h265_uhd}"`,
+            `video/mp4; codecs="${MP4_CODECS.h265Alt}"`,
+        ];
+        return {
+            mseSupported: Boolean(getMediaSourceClass()),
+            mseH264: isTypeSupported(h264Mime),
+            mseH265: h265Mimes.some(isTypeSupported),
+            h264Mime,
+            h265Mime: h265Mimes.find(isTypeSupported) || h265Mimes[0],
+        };
+    }
+
+    async function detectMSEHardwareDecode(resolution = 1080) {
+        const profile = getProfile(resolution);
+        const codecSupport = detectMSECodecSupport();
+        const empty = { supported: false, hardware: false, smooth: false };
+
+        if (!navigator.mediaCapabilities?.decodingInfo) {
+            return {
+                h264: { ...empty, supported: codecSupport.mseH264 },
+                h265: { ...empty, supported: codecSupport.mseH265 },
+                apiAvailable: false,
+            };
+        }
+
+        async function probe(mime) {
+            if (!isTypeSupported(mime)) return { ...empty, supported: false };
+            try {
+                const info = await navigator.mediaCapabilities.decodingInfo({
+                    type: 'media-source',
+                    video: {
+                        contentType: mime,
+                        width: profile.width,
+                        height: profile.height,
+                        bitrate: profile.bitrate,
+                        framerate: profile.fps,
+                    },
+                });
+                return {
+                    supported: Boolean(info.supported),
+                    hardware: Boolean(info.powerEfficient),
+                    smooth: Boolean(info.smooth),
+                };
+            } catch (err) {
+                return { ...empty, supported: true, error: err.message };
+            }
+        }
+
+        const [h264, h265] = await Promise.all([
+            probe(`video/mp4; codecs="${profile.h264Codec}"`),
+            probe(`video/mp4; codecs="${profile.h265Codec}"`),
+        ]);
+        return { h264, h265, apiAvailable: true };
+    }
+
+    function getGPUInfo() {
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (!gl) return { renderer: 'unknown', vendor: 'unknown' };
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (!debugInfo) return { renderer: 'unknown', vendor: 'unknown' };
+            return {
+                renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || 'unknown',
+                vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || 'unknown',
+            };
+        } catch {
+            return { renderer: 'unknown', vendor: 'unknown' };
+        }
+    }
+
+    function classifyGPU(renderer) {
+        const r = (renderer || '').toLowerCase();
+        if (/apple m[1-9]|apple gpu/.test(r)) return { gpuClass: 'apple_silicon', gpuScore: 85, label: 'Apple Silicon' };
+        if (/rtx 40[789]0|rtx 4090|rtx 4080|rtx 4070/.test(r)) return { gpuClass: 'discrete_high', gpuScore: 95, label: '独显高端' };
+        if (/rtx 4060|rtx 3060|rtx 3070|rtx 3080|rtx 3090|rtx 20[678]0|gtx 1660|gtx 1650/.test(r)) return { gpuClass: 'discrete_mid', gpuScore: 75, label: '独显中端' };
+        if (/gtx 1050|gtx 960|rx 5[67]0|gt 1030/.test(r)) return { gpuClass: 'discrete_low', gpuScore: 55, label: '独显入门' };
+        if (/uhd graphics|iris xe|iris plus|hd graphics|vega|radeon graphics/.test(r)) return { gpuClass: 'integrated', gpuScore: 40, label: '核显' };
+        if (/microsoft basic|swiftshader|llvmpipe|software/.test(r)) return { gpuClass: 'unknown', gpuScore: 15, label: '软件渲染' };
+        return { gpuClass: 'unknown', gpuScore: 50, label: '未识别' };
+    }
+
+    function estimateHardwareTier() {
+        const cpuCores = navigator.hardwareConcurrency || 4;
+        const deviceMemory = navigator.deviceMemory || null;
+        const gpu = getGPUInfo();
+        const gpuMeta = classifyGPU(gpu.renderer);
+
+        let cpuScore = 50;
+        let memoryScore = 50;
+        if (cpuCores >= 16) cpuScore = 95;
+        else if (cpuCores >= 12) cpuScore = 85;
+        else if (cpuCores >= 8) cpuScore = 75;
+        else if (cpuCores >= 6) cpuScore = 60;
+        else if (cpuCores >= 4) cpuScore = 45;
+        else cpuScore = 30;
+
+        if (deviceMemory == null) memoryScore = 50;
+        else if (deviceMemory >= 32) memoryScore = 90;
+        else if (deviceMemory >= 16) memoryScore = 70;
+        else if (deviceMemory >= 8) memoryScore = 50;
+        else memoryScore = 30;
+
+        const totalScore = gpuMeta.gpuScore * 0.45 + cpuScore * 0.35 + memoryScore * 0.2;
+        let tier;
+        if (totalScore >= 78) tier = 'high';
+        else if (totalScore >= 52) tier = 'mid';
+        else tier = 'low';
+
+        return {
+            tier,
+            score: Math.round(totalScore),
+            scoreBreakdown: {
+                gpu: gpuMeta.gpuScore,
+                cpu: cpuScore,
+                memory: memoryScore,
+                weights: { gpu: 0.45, cpu: 0.35, memory: 0.2 },
+                formula: `${gpuMeta.gpuScore}×0.45 + ${cpuScore}×0.35 + ${memoryScore}×0.2 = ${Math.round(totalScore)}`,
+            },
+            gpuScore: gpuMeta.gpuScore,
+            cpuScore,
+            memoryScore,
+            gpuClass: gpuMeta.gpuClass,
+            gpuClassLabel: gpuMeta.label,
+            cpuCores,
+            deviceMemory,
+            gpu,
+        };
+    }
+
+    function extrapolateTableLimit(method, codec, profile, tier) {
+        const base = STREAM_CAPACITY[method][codec][1080][tier];
+        const pixelRatio = profile.pixels / RESOLUTION_PROFILES[1080].pixels;
+        return Math.max(1, Math.floor(base / (pixelRatio * CODEC_LOAD[codec])));
+    }
+
+    function getTableLimit(method, codec, profile, tier) {
+        const table = STREAM_CAPACITY[method]?.[codec]?.[profile.key];
+        if (table) return table[tier];
+        return extrapolateTableLimit(method, codec, profile, tier);
+    }
+
+    function getGpuDecodeLimit(gpuClass, profile, codec, hardwareDecodeAvailable) {
+        if (!hardwareDecodeAvailable) return null;
+        const budget = GPU_PIXEL_BUDGET[gpuClass] ?? GPU_PIXEL_BUDGET.unknown;
+        const load = profile.pixels * profile.fps * CODEC_LOAD[codec];
+        return Math.max(1, Math.floor(budget / load));
+    }
+
+    function getCpuDemuxLimit(cpuCores, profile) {
+        const cost = CPU_DEMUX_COST[profile.key] ?? 0.3;
+        return Math.max(1, Math.floor((cpuCores * 0.75) / cost));
+    }
+
+    function getRenderLimit(tier, profile) {
+        const base = RENDER_BASE[tier] ?? RENDER_BASE.mid;
+        const scale = RESOLUTION_PROFILES[1080].pixels / profile.pixels;
+        return Math.max(1, Math.floor(base * scale));
+    }
+
+    function getWasmMemoryLimit(profile, deviceMemoryGB) {
+        if (!deviceMemoryGB) return null;
+        const usableMB = deviceMemoryGB * 1024 * 0.65;
+        return Math.max(1, Math.floor(usableMB / WASM_MEMORY_MB[profile.key]));
+    }
+
+    function getCapabilityLimit(probe, method, profile) {
+        if (!probe.supported) return { value: 0, note: '浏览器报告不支持该档位解码' };
+        if (probe.smooth !== false) return null;
+        if (method === 'mse' && probe.hardware) {
+            if (profile.key >= 2160) return { value: 4, note: '4K 硬解 smooth=false，保守上限' };
+            if (profile.key >= 1440) return { value: 8, note: '2K 硬解 smooth=false，保守上限' };
+            return null;
+        }
+        if (method === 'wasm') return { value: 1, note: '软解 smooth=false，建议单路' };
+        return { value: 3, note: 'MSE 未确认硬解且 smooth=false' };
+    }
+
+    function resolveBottleneck(limits, maxStreams) {
+        const hit = limits.filter(item => item.value === maxStreams);
+        const labels = {
+            decode_table: '解码路数表',
+            extrapolated_table: '路数表外推(2K/4K)',
+            gpu_throughput: 'GPU 硬解吞吐',
+            cpu_demux: 'CPU 解封装',
+            render_composite: '多路渲染合成',
+            wasm_memory: 'WASM 内存',
+            media_capability: 'MediaCapabilities 探测',
+        };
+        if (hit.length === 0) return { sources: ['unknown'], description: '综合估算' };
+        return {
+            sources: hit.map(item => item.source),
+            description: hit.map(item => labels[item.source] || item.source).join(' + '),
+        };
+    }
+
+    function pickDecodeMethod({ hasH265, hardwareDecode, codecSupport }) {
+        const codec = hasH265 ? 'h265' : 'h264';
+        const hw = hardwareDecode[codec];
+        if (hw.supported && hw.hardware) return { method: 'mse', reason: `MSE 硬解 ${codec.toUpperCase()} 可用` };
+        if (hw.supported) return { method: 'mse', reason: `MSE 支持 ${codec.toUpperCase()}，未确认硬解，按 MSE 估算` };
+        if ((codec === 'h264' && codecSupport.mseH264) || (codec === 'h265' && codecSupport.mseH265)) {
+            return { method: 'mse', reason: `isTypeSupported 支持 ${codec.toUpperCase()}` };
+        }
+        return { method: 'wasm', reason: `MSE 不支持 ${codec.toUpperCase()}，降级 WASM 软解` };
+    }
+
+    async function resolveMaxConcurrentStreams(options = {}) {
+        const profile = getProfile(options.resolution ?? 1080);
+        const hasH265 = Boolean(options.hasH265);
+
+        const codecSupport = detectMSECodecSupport();
+        const hardware = estimateHardwareTier();
+        const hardwareDecode = await detectMSEHardwareDecode(profile.key);
+
+        const codecKey = hasH265 ? 'h265' : 'h264';
+        const probe = hardwareDecode[codecKey];
+        const { method, reason: decodeReason } = pickDecodeMethod({ hasH265, hardwareDecode, codecSupport });
+
+        const tableSource = STREAM_CAPACITY[method]?.[codecKey]?.[profile.key] ? 'decode_table' : 'extrapolated_table';
+        const tableValue = getTableLimit(method, codecKey, profile, hardware.tier);
+
+        const limits = [{ source: tableSource, value: tableValue }];
+        let maxStreams = tableValue;
+
+        const gpuLimit = getGpuDecodeLimit(hardware.gpuClass, profile, codecKey, method === 'mse' && probe.hardware);
+        if (gpuLimit != null) {
+            limits.push({ source: 'gpu_throughput', value: gpuLimit });
+            maxStreams = Math.min(maxStreams, gpuLimit);
+        }
+
+        const demuxLimit = getCpuDemuxLimit(hardware.cpuCores, profile);
+        limits.push({ source: 'cpu_demux', value: demuxLimit });
+        maxStreams = Math.min(maxStreams, demuxLimit);
+
+        const renderLimit = getRenderLimit(hardware.tier, profile);
+        limits.push({ source: 'render_composite', value: renderLimit });
+        maxStreams = Math.min(maxStreams, renderLimit);
+
+        if (method === 'wasm') {
+            const memLimit = getWasmMemoryLimit(profile, hardware.deviceMemory);
+            if (memLimit != null) {
+                limits.push({ source: 'wasm_memory', value: memLimit });
+                maxStreams = Math.min(maxStreams, memLimit);
+            }
+        }
+
+        const capLimit = getCapabilityLimit(probe, method, profile);
+        let mediaCapabilityNote = null;
+        if (capLimit != null) {
+            limits.push({ source: 'media_capability', value: capLimit.value, note: capLimit.note });
+            maxStreams = Math.min(maxStreams, capLimit.value);
+        } else if (probe.smooth === false && probe.hardware) {
+            mediaCapabilityNote = 'HEVC smooth=false 但硬解可用，720/1080 不参与限流（浏览器 API 对 HEVC 常误报）';
+        }
+
+        maxStreams = Math.max(0, maxStreams);
+
+        return {
+            maxStreams,
+            rawTableMax: tableValue,
+            resolution: profile.key,
+            resolutionLabel: profile.label,
+            codec: codecKey,
+            decodeMethod: method,
+            decodeReason,
+            hardwareTier: hardware.tier,
+            bottleneck: resolveBottleneck(limits, maxStreams),
+            mediaCapabilityNote,
+            hardware,
+            codecSupport,
+            hardwareDecode,
+            limits,
+            videoProfile: {
+                width: profile.width,
+                height: profile.height,
+                bitrate: profile.bitrate,
+                fps: profile.fps,
+                pixels: profile.pixels,
+            },
+        };
+    }
+
+    async function getMaxConcurrentStreams(options = {}) {
+        return (await resolveMaxConcurrentStreams(options)).maxStreams;
+    }
+
+    async function getRecommendedMaxConcurrentStreams(options = {}) {
+        return resolveMaxConcurrentStreams(options);
+    }
+
+    // ── Demo UI ───────────────────────────────────────────────
+
+    const $ = id => document.getElementById(id);
+
+    const LIMIT_LABELS = {
+        decode_table: '解码路数表（实测）',
+        extrapolated_table: '路数表外推（2K/4K）',
+        gpu_throughput: 'GPU 硬解吞吐',
+        cpu_demux: 'CPU 解封装',
+        render_composite: '多路渲染合成',
+        wasm_memory: 'WASM 内存',
+        media_capability: 'MediaCapabilities',
+    };
+
+    function boolCell(v) {
+        if (v === true) return '<td class="y">✓</td>';
+        if (v === false) return '<td class="n">✗</td>';
+        return `<td class="m">${v ?? '—'}</td>`;
+    }
+
+    function renderCodecTable(codecSupport, hardwareDecode) {
+        $('codecTable').querySelector('tbody').innerHTML = [
+            ['H.264', codecSupport.mseH264, hardwareDecode.h264],
+            ['H.265', codecSupport.mseH265, hardwareDecode.h265],
+        ].map(([name, supported, hw]) =>
+            `<tr><td><b>${name}</b></td>${boolCell(supported)}${boolCell(hw.hardware)}${boolCell(hw.smooth)}</tr>`
+        ).join('');
+    }
+
+    function renderHwTable(hardware) {
+        const bd = hardware.scoreBreakdown;
+        $('hwTable').innerHTML = [
+            ['GPU', `${hardware.gpu.renderer}（${hardware.gpuClassLabel}）`],
+            ['GPU 像素预算档', hardware.gpuClass],
+            ['CPU 核心', `${hardware.cpuCores}（得分 ${hardware.cpuScore}）`],
+            ['内存', `${hardware.deviceMemory ?? '未暴露'} GB（得分 ${hardware.memoryScore}）`],
+            ['综合得分', `${hardware.score} = ${bd.formula}`],
+            ['硬件档位', `<span class="badge">${hardware.tier}</span>`],
+        ].map(([k, v]) => `<tr><th style="width:130px">${k}</th><td>${v}</td></tr>`).join('');
+    }
+
+    function renderLimits(result) {
+        $('limitsTable').querySelector('tbody').innerHTML = result.limits.map(item => {
+            const active = item.value === result.maxStreams;
+            const note = item.note ? `<br><span class="limit-note">${item.note}</span>` : '';
+            return `<tr>
+                <td>${LIMIT_LABELS[item.source] || item.source}${note}</td>
+                <td><b>${item.value}</b></td>
+                <td class="${active ? 'y' : ''}">${active ? '生效' : ''}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    function renderResult(maxStreams, detail) {
+        const methodLabel = detail.decodeMethod === 'mse' ? 'MSE 硬解' : 'WASM 软解';
+        const warn = detail.mediaCapabilityNote
+            ? `<span class="warn">${detail.mediaCapabilityNote}</span>`
+            : '';
+        $('resultBox').innerHTML = `
+            <div class="result-big">
+                ${maxStreams}
+                <small>${detail.resolutionLabel} · ${detail.codec.toUpperCase()} · ${methodLabel}</small>
+            </div>
+            <p class="result-meta">
+                <code>getMaxConcurrentStreams()</code> → <b style="color:var(--green)">${maxStreams}</b><br>
+                ${detail.decodeReason} · 瓶颈：${detail.bottleneck.description}
+                ${warn}
+            </p>
+        `;
+        renderLimits(detail);
+        $('jsonOut').textContent = JSON.stringify(detail, null, 2);
+    }
+
+    async function run() {
+        $('btnRun').disabled = true;
+        $('btnRun').textContent = '检测中…';
+        const options = {
+            resolution: $('resolution').value,
+            hasH265: $('hasH265').checked,
+        };
+
+        try {
+            renderCodecTable(
+                detectMSECodecSupport(),
+                await detectMSEHardwareDecode(options.resolution)
+            );
+            renderHwTable(estimateHardwareTier());
+
+            const [maxStreams, detail] = await Promise.all([
+                getMaxConcurrentStreams(options),
+                getRecommendedMaxConcurrentStreams(options),
+            ]);
+            renderResult(maxStreams, detail);
+        } catch (err) {
+            $('resultBox').innerHTML = `<div class="result-big" style="color:var(--red)">错误<small>${err.message}</small></div>`;
+            $('jsonOut').textContent = String(err.stack || err);
+        } finally {
+            $('btnRun').disabled = false;
+            $('btnRun').textContent = '检测并计算';
+        }
+    }
+
+    $('btnRun').addEventListener('click', run);
+    run();
+</script>
+</body>
+</html>
