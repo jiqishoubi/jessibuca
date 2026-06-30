@@ -218,10 +218,26 @@
 <script src="./demo.js"></script>
 <script>
     if (window.PageSpy) {
+        let protocol = window.location.protocol; //
+        // default http
+        let enableSSL = false;
+        let api = 'spy.jessibuca.com:6752'
+        if (protocol.indexOf('http') === -1) {
+            protocol = 'http:'
+        }
+
+        // https config
+        if (protocol.indexOf('https') !== -1) {
+            enableSSL = true;
+            api = 'spy.jessibuca.com'
+        }
+
+        let clientOrigin = protocol + "//" + api;
+
         var $pageSpy = new PageSpy({
-            api: "nvr.m7s.live:6752",
-            clientOrigin: "http://nvr.m7s.live:6752",
-            enableSSL: false,
+            api: api,
+            clientOrigin: clientOrigin,
+            enableSSL: enableSSL,
             project: 'jessibucaPro',
         })
     }
