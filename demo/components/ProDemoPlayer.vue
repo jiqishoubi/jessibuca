@@ -1,334 +1,382 @@
 <template>
-    <div class="root">
+    <div class="root player-demo player-demo-pro" :class="{ 'is-advanced-open': showAdvanced }">
         <div class="container-shell">
-            <div class="container-shell-title">jessibuca Pro demo player <span class="tag-version" v-if="version">({{
-                    version
-                }})</span></div>
-            <div id="container"></div>
-            <div class="input input-annnie">
-                <div style="color: red" class="input-tips">Tips:支持录制MP4(MPEG-4)格式的视频(仅录制视频，不包含音频)
+            <div class="player-head">
+                <div class="container-shell-title">jessibuca Pro demo player <span class="tag-version" v-if="version">({{
+                        version
+                    }})</span></div>
+            </div>
+            <div id="container" class="player-stage"></div>
+            <button
+                type="button"
+                class="player-advanced-toggle"
+                :aria-expanded="showAdvanced ? 'true' : 'false'"
+                @click="toggleAdvanced"
+            >提示与配置</button>
+            <div class="player-advanced">
+            <div class="input is-stack">
+                <span class="player-action-label">提示</span>
+                <div class="player-tips">
+                    <div class="player-tip">内置 MP4 录制只含视频，不含音频</div>
+                    <div class="player-tip">内置 FLV 录制包含视频和音频</div>
+                    <div class="player-tip is-ok"><a href="/pro-module.html">MP4 录制扩展模块</a>支持 H264 / H265 + AAC / MP3 / G711a/u</div>
                 </div>
             </div>
-            <div class="input input-annnie">
-                <div style="color: red" class="input-tips">Tips:支持录制FLV格式的视频(视频+音频)
-                </div>
-            </div>
-            <div class="input input-annnie">
-                <div style="color: green" class="input-tips">Tips:<a href="/pro-module.html">MP4录制扩展模块</a>支持(视频H264/H265+音频AAC,MP3,G711a/u)
-                </div>
-            </div>
-            <div class="input input-wrap">
-                <div>
-                    当前浏览器：
-                    <span v-if="supportMSE" style="color: green;margin-right: 10px">支持MSE H264解码；</span>
-                    <span v-if="!supportMSE" style="color: red;">不支持MSE H264解码；</span>
-                    <span v-if="supportMSEHevc" style="color: green;margin-right: 10px">支持MSE H265解码;</span>
-                    <span v-if="!supportMSEHevc" style="color: red;margin-right: 10px;">不支持MSE H265解码,会自动切换成wasm(simd)解码</span>
-                    <span v-if="!isEdgeSupportHevc"><a style="color:blue"
-                                                       href="https://jessibuca.com/zip/Microsoft.HEVCVideoExtension_2.1.1803.0_neutra.zip"
-                                                       target="_blank">下载window Edge Hevc扩展插件</a></span>
-                </div>
-                <div>
-                    <div v-if="playing && decodeType">
-                        当前解码：<span>{{ decodeType }}</span>
+            <div class="input is-stack">
+                <span class="player-action-label">能力</span>
+                <div class="player-groups">
+                    <div class="player-group">
+                        <span class="player-group-label">硬解码</span>
+                        <div class="player-caps">
+                            <span
+                                class="player-cap"
+                                :class="supportMSE ? 'is-ok' : 'is-no'"
+                                :title="supportMSE ? '当前浏览器支持 MSE H264 解码' : '当前浏览器不支持 MSE H264 解码'"
+                            >MSE H264</span>
+                            <span
+                                class="player-cap"
+                                :class="supportMSEHevc ? 'is-ok' : 'is-no'"
+                                :title="supportMSEHevc ? '当前浏览器支持 MSE H265 解码' : '不支持 MSE H265，会自动切到 wasm(simd)'"
+                            >MSE H265</span>
+                            <span
+                                class="player-cap"
+                                :class="supportWCS ? 'is-ok' : 'is-no'"
+                                :title="supportWCS ? '当前浏览器支持 WebCodecs H264' : '不支持 WebCodecs H264（需要 https / localhost）'"
+                            >WebCodecs H264</span>
+                            <span
+                                class="player-cap"
+                                :class="supportWCSHevc ? 'is-ok' : 'is-no'"
+                                :title="supportWCSHevc ? '当前浏览器支持 WebCodecs H265' : '不支持 WebCodecs H265（需要 https / localhost），会自动切到 wasm(simd)'"
+                            >WebCodecs H265</span>
+                            <a
+                                v-if="!isEdgeSupportHevc"
+                                href="https://jessibuca.com/zip/Microsoft.HEVCVideoExtension_2.1.1803.0_neutra.zip"
+                                target="_blank"
+                            >Edge HEVC 插件</a>
+                        </div>
                     </div>
-                    <div v-if="playing && renderType">
-                        当前模式：<span>{{ playType }}</span> 当前渲染：<span>{{ renderType }}</span>
+                    <div class="player-group">
+                        <span class="player-group-label">软解码</span>
+                        <div class="player-caps">
+                            <span class="player-cap is-ok" title="当前浏览器支持 WASM 解码">WASM</span>
+                            <span
+                                class="player-cap"
+                                :class="supportSIMDHevc ? 'is-ok' : 'is-no'"
+                                :title="supportSIMDHevc ? '当前浏览器支持 SIMD 解码' : '不支持 SIMD，会自动切到 wasm 解码'"
+                            >WASM SIMD</span>
+                            <span
+                                class="player-cap"
+                                :class="supportMT ? 'is-ok' : 'is-no'"
+                                :title="supportMT ? '支持 wasm / wasm(SIMD) 多线程解码' : '不支持多线程解码'"
+                            >多线程</span>
+                            <a v-if="!supportMT" href="/pro-doc.html#localhost">多线程开启方式</a>
+                        </div>
+                    </div>
+                    <div class="player-group">
+                        <span class="player-group-label">渲染</span>
+                        <div class="player-caps">
+                            <span
+                                class="player-cap"
+                                :class="supportWebgpu ? 'is-ok' : 'is-no'"
+                                :title="supportWebgpu ? '支持 WebGPU 渲染（wasm(simd) + canvas）' : '不支持 WebGPU，会自动切到 WebGL'"
+                            >WebGPU</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input" v-if="playing && (decodeType || renderType)">
+                <span class="player-action-label">状态</span>
+                <div class="player-caps">
+                    <span v-if="decodeType" class="player-cap is-ok">解码 {{ decodeType }}</span>
+                    <span v-if="playType" class="player-cap is-ok">模式 {{ playType }}</span>
+                    <span v-if="renderType" class="player-cap is-ok">渲染 {{ renderType }}</span>
+                </div>
+            </div>
+            <div class="input">
+                <span class="player-action-label">缓冲设置</span>
+                <div>
+                    <label class="player-field">
+                        <span>网络延迟</span>
+                        <input type="number" v-model="networkDelay" @change="changeNetworkDelay" />
+                        <span>秒</span>
+                    </label>
+                    <label class="player-field">
+                        <span>最大延迟</span>
+                        <input type="number" v-model="videoBufferDelay" @change="changeBufferDelay" />
+                        <span>秒</span>
+                    </label>
+                    <label class="player-field">
+                        <span>缓冲</span>
+                        <input type="number" v-model="videoBuffer" @change="changeBuffer" />
+                        <span>秒</span>
+                    </label>
+                </div>
+            </div>
+            <div class="input is-stack">
+                <span class="player-action-label">解码设置</span>
+                <div class="player-groups">
+                    <div class="player-group">
+                        <span class="player-group-label">硬解码</span>
+                        <div>
+                            <label>
+                                <input type="checkbox" v-model="useMSE" @change="restartPlay('mse')" />
+                                <span>MediaSource</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="useWCS" @change="restartPlay('wcs')" />
+                                <span>WebCodecs</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="audioDecodeUseHardware" @change="restartPlay()" />
+                                <span>硬解码音频</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="decoderErrorAutoWasm" @change="restartPlay()" />
+                                <span>硬解失败降 wasm</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="player-group">
+                        <span class="player-group-label">Worker</span>
+                        <div>
+                            <label title="MediaSource / WebCodecs 在 worker 中解封装">
+                                <input type="checkbox" v-model="demuxUseWorker" @change="restartPlay()" />
+                                <span>解封装</span>
+                            </label>
+                            <label title="仅 MediaSource：在 worker 中解码">
+                                <input type="checkbox" v-model="mseDecoderUseWorker" @change="restartPlay()" />
+                                <span>MSE 解码(仅MediaSource解码生效)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="player-group">
+                        <span class="player-group-label">软解码</span>
+                        <div>
+                            <label>
+                                <input type="checkbox" v-model="useWasm" @change="restartPlay('wasm')" />
+                                <span>WASM</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="useSIMD" @change="restartPlay('simd')" />
+                                <span>WASM SIMD</span>
+                            </label>
+                            <label v-if="supportMT">
+                                <input type="checkbox" v-model="useMT" @change="restartPlay()" />
+                                <span>多线程</span>
+                            </label>
+                            <span class="player-hint">未勾选硬解时默认 WASM</span>
+                        </div>
+                    </div>
+                    <div class="player-group">
+                        <span class="player-group-label">WASM 性能</span>
+                        <div>
+                            <label class="player-field" title="仅支持 WASM 解码器">
+                                <span>配置</span>
+                                <select v-model="ffmpegDecodeDeblockMode" @change="replay">
+                                    <option value="no">画质优先</option>
+                                    <option value="off">性能优先</option>
+                                </select>
+                            </label>
+                            <span class="player-hint">仅 WASM 生效。画质优先 CPU 更高易卡顿；性能优先会降画质减延迟</span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="input">
-                当前浏览器：
-                <span v-if="supportWCS" style="color: green;">支持Webcodec H264解码；</span>
-                <span v-if="!supportWCS" style="color: red;">不支持Webcodec H265解码(需要https/localhost),</span>
-                <span v-if="supportWCSHevc" style="color: green;">支持Webcodec H265解码；</span>
-                <span v-if="!supportWCSHevc" style="color: red;">不支持Webcodec H265解码(需要https/localhost),会自动切换成wasm(simd)解码</span>
-            </div>
-            <div class="input">
-                当前浏览器：
-                <span v-if="supportSIMDHevc" style="color: green;">支持SIMD解码；</span>
-                <span v-else style="color: red;">不支持SIMD解码,会自动切换成wasm解码；</span>
-
-                <span v-if="supportMT" style="color: green;">支持wasm,wasm(SIMD)多线程解码；</span>
-                <span v-else style="color: red;">不支持wasm,wasm(SIMD)多线程解码； <a style="color: blue"
-                                                                                     href="/pro-doc.html#localhost">多线程开启方式</a> </span>
-            </div>
-            <div class="input">
-                当前浏览器：
-                <span v-if="supportWebgpu" style="color: green;">支持webgpu渲染</span>
-                <span v-else style="color: red;">不支持webgpu渲染,会自动切换成webgl渲染</span>（适用于wasm(simd)解码+canvas渲染）
-            </div>
-            <div class="input">
-                <span>最大网络延迟:</span>
-                <input
-                    style="width: 50px"
-                    type="number"
-                    v-model="networkDelay"
-                    @change="changeNetworkDelay"
-                /><span style="margin-right: 5px">秒</span>
-                <span>最大延迟:</span>
-                <input
-                    style="width: 50px"
-                    type="number"
-                    v-model="videoBufferDelay"
-                    @change="changeBufferDelay"
-                /><span style="margin-right: 5px">秒</span>
-                <span>缓冲:</span>
-                <input
-                    style="width: 50px"
-                    type="number"
-                    v-model="videoBuffer"
-                    @change="changeBuffer"
-                /><span style="margin-right: 5px">秒</span>
-
-
-            </div>
-            <div class="input">
-                <span>硬解码：</span>
-                <input
-                    type="checkbox"
-                    v-model="useMSE"
-                    @change="restartPlay('mse')"
-                /><span>MediaSource</span>
-                <input
-                    type="checkbox"
-                    v-model="useWCS"
-                    @change="restartPlay('wcs')"
-                /><span>webcodecs</span> |
-                <input
-                    checked
-                    @change="restartPlay()"
-                    type="checkbox"
-                    v-model="audioDecodeUseHardware"
-                />
-                <span>硬解码音频</span>
-            </div>
-            <div class="input">
-                <span>软解码：</span>
-                <input
-                    type="checkbox"
-                    v-model="useWasm"
-                    @change="restartPlay('wasm')"
-                /><span>WASM</span>
-                <input
-                    type="checkbox"
-                    v-model="useSIMD"
-                    @change="restartPlay('simd')"
-                /><span>SIMD</span>
-                <span style="color: green">默认使用wasm解码器</span>
-            </div>
-            <div class="input">
-                <input
-                    v-model="demuxUseWorker"
-                    type="checkbox"
-                    @change="restartPlay()"
-                /><span>硬解码(MediaSource，Webcodec)worker解封装</span>
-                <input
-                    v-model="mseDecoderUseWorker"
-                    type="checkbox"
-                    @change="restartPlay()"
-                /><span>硬解码(MediaSource)worker解码</span>
-            </div>
-            <div class="input">
+                <span class="player-action-label">格式设置</span>
                 <div>
-                    <div v-if="supportMT" style="display: inline-block">
-                        <input
-
-                            type="checkbox"
-                            v-model="useMT"
-                            @change="restartPlay()"
-                        /><span>使用多线程解码</span>
+                    <label>
+                        <input type="checkbox" v-model="isFlv" @change="restartPlay('isFlv')" />
+                        <span>FLV</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isHls" @change="restartPlay('isHls')" />
+                        <span>HLS</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isFmp4" @change="restartPlay('isFmp4')" />
+                        <span>fMP4</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isTs" @change="restartPlay('isTs')" />
+                        <span>MPEG-TS</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isPs" @change="restartPlay('isPs')" />
+                        <span>MPEG-PS</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isNakedFlow" @change="restartPlay('isNakedFlow')" />
+                        <span>裸流</span>
+                    </label>
+                </div>
+            </div>
+            <div class="input is-stack">
+                <span class="player-action-label">策略设置</span>
+                <div>
+                    <label>
+                        <input type="checkbox" v-model="isMute" @change="restartPlay()" />
+                        <span>静音</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="hasVideo" @change="restartPlay()" />
+                        <span>解码视频</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="hasAudio" @change="restartPlay()" />
+                        <span>解码音频</span>
+                    </label>
+                    <label title="wasm 软解码支持">
+                        <input type="checkbox" v-model="checkFirstIFrame" @change="restartPlay()" />
+                        <span>检查首帧 I 帧</span>
+                    </label>
+                    <label title="跳过花屏 / 灰色 / 拖拉 / 半截画面，wasm 和 WebCodecs 支持">
+                        <input type="checkbox" v-model="isIgnoreExceptionFrame" @change="restartPlay()" />
+                        <span>跳过异常帧</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="syncAudioAndVideo" @change="restartPlay()" />
+                        <span>音视频同步</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="isDropSameTimestampGop" @change="restartPlay()" />
+                        <span>相同时间戳丢 GOP</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="networkDelayTimeoutReplay" @change="restartPlay()" />
+                        <span>网络延迟重播</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="hiddenAutoPause" @change="restartPlay()" />
+                        <span>切后台暂停</span>
+                    </label>
+                </div>
+            </div>
+            <div class="input">
+                <span class="player-action-label">渲染设置</span>
+                <div>
+                    <label class="player-field">
+                        <span>标签</span>
+                        <select v-model="renderDom" @change="renderDomChange">
+                            <option value="video">video</option>
+                            <option value="canvas">canvas</option>
+                        </select>
+                    </label>
+                    <label class="player-field" v-if="renderDom === 'canvas'">
+                        <span>引擎</span>
+                        <select v-model="canvasRenderType" @change="renderDomChange">
+                            <option value="webgl">webgl</option>
+                            <option value="webgpu">webgpu</option>
+                        </select>
+                    </label>
+                    <label class="player-field">
+                        <span>音频</span>
+                        <select v-model="audioEngine" @change="replay">
+                            <option value="">自动</option>
+                            <option value="worklet">worklet(https)</option>
+                            <option value="script">script(默认)</option>
+                            <option value="active">active(安卓)</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="input is-stack">
+                <span class="player-action-label">界面设置</span>
+                <div class="player-groups">
+                    <div class="player-group">
+                        <span class="player-group-label">操作按钮</span>
+                        <div>
+                            <label>
+                                <input type="checkbox" v-model="allOperateBtns" @change="restartPlay" />
+                                <span>全部</span>
+                            </label>
+                            <label v-for="item in operateBtnOptions" :key="item.key">
+                                <input type="checkbox" v-model="operateBtns[item.key]" @change="restartPlay" />
+                                <span>{{ item.label }}</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="showExtendOperateBtns" @change="restartPlay" />
+                                <span>自定义</span>
+                            </label>
+                        </div>
                     </div>
-                    <input
-                        type="checkbox"
-                        v-model="isMute"
-                        @change="restartPlay()"
-                    /><span>静音播放</span>
-
-                    <input
-                        type="checkbox"
-                        v-model="decoderErrorAutoWasm"
-                        @change="restartPlay()"
-                    /><span>硬解码失败降级到wasm</span>
+                    <div class="player-group">
+                        <span class="player-group-label">其他</span>
+                        <div>
+                            <label>
+                                <input type="checkbox" v-model="showBandwidth" @change="restartPlay" />
+                                <span>网速</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="hotKey" @change="restartPlay()" />
+                                <span>快捷键</span>
+                            </label>
+                            <label title="移动端不支持">
+                                <input type="checkbox" v-model="controlAutoHide" @change="restartPlay()" />
+                                <span>控制栏自动隐藏</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" v-model="showPerformance" @change="togglePerformance" />
+                                <span>性能面板</span>
+                            </label>
+                            <button type="button" @click="toggleControlBar">隐藏/展示控制条</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="input">
+                <span class="player-action-label">录制设置</span>
                 <div>
-                    <input
-                        type="checkbox"
-                        v-model="isIgnoreExceptionFrame"
-                        @change="restartPlay()"
-                    /><span>是否跳过花屏\灰色\拖拉\半截不全的画面（wasm和webcodec支持）</span>
+                    <label class="player-field">
+                        <span>格式</span>
+                        <select v-model="recordType" @change="restartPlay()">
+                            <option value="webm">webm</option>
+                            <option value="mp4">mp4</option>
+                        </select>
+                    </label>
                 </div>
             </div>
             <div class="input">
-                <input
-                    type="checkbox"
-                    v-model="isFlv"
-                    @change="restartPlay('isFlv')"
-                /><span>设置Flv格式</span>
-                <input
-                    type="checkbox"
-                    v-model="isHls"
-                    @change="restartPlay('isHls')"
-                /><span>设置Hls格式</span>
-                <input
-                    type="checkbox"
-                    v-model="isFmp4"
-                    @change="restartPlay('isFmp4')"
-                /><span>设置Fmp4格式</span>
-                <input
-                    type="checkbox"
-                    v-model="isTs"
-                    @change="restartPlay('isTs')"
-                /><span>设置Mpeg-ts格式</span>
-                <input
-                    type="checkbox"
-                    v-model="isPs"
-                    @change="restartPlay('isPs')"
-                /><span>设置Mpeg(PS)格式</span>
-                <input
-                    type="checkbox"
-                    v-model="isNakedFlow"
-                    @change="restartPlay('isNakedFlow')"
-                /><span>设置裸流格式</span>
-            </div>
-            <div class="input">
-                <input
-                    type="checkbox"
-                    v-model="networkDelayTimeoutReplay"
-                    @change="restartPlay()"
-                /><span>网络延迟重新播放</span>
-                <input
-                    type="checkbox"
-                    v-model="hiddenAutoPause"
-                    @change="restartPlay()"
-                /><span>最小化自动暂停</span>
-                <input
-                    type="checkbox"
-                    v-model="hasVideo"
-                    @change="restartPlay()"
-                /><span>解码视频</span>
-                <input
-                    type="checkbox"
-                    v-model="hasAudio"
-                    @change="restartPlay()"
-                /><span>解码音频</span>
-                <input
-                    type="checkbox"
-                    v-model="checkFirstIFrame"
-                    @change="restartPlay()"
-                /><span>检查首帧是否I帧（wasm软解码支持）</span>
-            </div>
-            <div class="input">
-                <span>渲染标签：</span>
-                <select v-model="renderDom" @change="renderDomChange">
-                    <option value="video">video</option>
-                    <option value="canvas">canvas</option>
-                </select>
-                <template v-if="renderDom === 'canvas'">
-                    <span>渲染引擎：</span>
-                    <select v-model="canvasRenderType" @change="renderDomChange">
-                        <option value="webgl">webgl</option>
-                        <option value="webgpu">webgpu</option>
-                    </select>
-                </template>
-                <span>音频引擎：</span>
-                <select v-model="audioEngine" @change="replay">
-                    <option value="">自动</option>
-                    <option value="worklet">worklet(https)</option>
-                    <option value="script">script(默认)</option>
-                    <option value="active">active(安卓)</option>
-                </select>
-                <span class="span-row" style="margin-left: 10px">
-                    <span style="color:red;">录制格式</span>
-                    <select v-model="recordType" @change="restartPlay()">
-                        <option value="webm">webm</option>
-                        <option value="mp4">mp4</option>
-                    </select>
-                </span>
-                <input
-                    type="checkbox"
-                    v-model="isDebug"
-                    ref="isDebug"
-                    @change="restartPlay"
-                /><span>控制台日志</span>
-                <span class="span-row" v-if="isDebug" style="margin-left: 10px">
-                    <span style="color:red;">日志等级</span>
-                    <select v-model="debugLevel" @change="restartPlay()">
-                        <option value="debug">debug</option>
-                        <option value="warn">warn</option>
-                    </select>
-                </span>
-            </div>
-            <div class="input">
-
-                <div style="line-height: 30px">
-                    <input
-                        type="checkbox"
-                        v-model="showOperateBtns"
-                        @change="restartPlay"
-                    /><span>操作按钮</span>
-                    <input
-                        type="checkbox"
-                        v-model="showBandwidth"
-                        @change="restartPlay"
-                    /><span>网速</span>
-                    <input
-                        type="checkbox"
-                        v-model="hotKey"
-                        @change="restartPlay()"
-                    /><span>键盘快捷键</span>
-                    <input
-                        type="checkbox"
-                        v-model="controlAutoHide"
-                        @change="restartPlay()"
-                    /><span>控制栏自动隐藏</span>
-                    <input
-                        type="checkbox"
-                        v-model="syncAudioAndVideo"
-                        @change="restartPlay()"
-                    /><span>音视频同步</span>
-                    <input
-                        type="checkbox"
-                        v-model="isDropSameTimestampGop"
-                        @change="restartPlay()"
-                    /><span>遇到相同时间戳是否丢gop</span>
-                    <input
-                        type="checkbox"
-                        v-model="showPerformance"
-                        @change="togglePerformance"
-                    /><span>显示性能面板</span>
-                </div>
-            </div>
-            <div class="input">
+                <span class="player-action-label">调试设置</span>
                 <div>
-                    <button @click="toggleControlBar">toggle控制条</button>
-                    <a href="/test-url.html" target="_blank"
-                       style="color: red;margin-left: 10px">测试地址(包含VR测试地址)</a>
+                    <label>
+                        <input type="checkbox" v-model="isDebug" ref="isDebug" @change="restartPlay" />
+                        <span>控制台日志</span>
+                    </label>
+                    <label class="player-field" v-if="isDebug">
+                        <span>等级</span>
+                        <select v-model="debugLevel" @change="restartPlay()">
+                            <option value="debug">debug</option>
+                            <option value="warn">warn</option>
+                        </select>
+                    </label>
+                    <a href="/test-url.html" target="_blank">测试地址</a>
                 </div>
             </div>
-            <div class="input">
-                <div>输入URL：</div>
+            </div>
+
+
+            <div class="input player-url">
+                <span class="player-action-label">地址</span>
                 <input
                     placeholder="支持 hls/ws-raw/ws-flv/http-flv/fmp4/mpeg-ts/mpeg(ps)/webrtc/Aliyun-rtc/裸流/等协议"
                     type="input"
                     autocomplete="on"
                     v-model="playUrl"
                 />
-
             </div>
             <div class="input">
+                <span class="player-action-label">播放</span>
                 <div>
                     <template v-if="!playing">
-                        <button v-if="playType === '' || playType === 'play'" @click="play">播放直播流</button>
+                        <button v-if="playType === '' || playType === 'play'" class="btn-primary" @click="play">播放直播流</button>
                         <button v-if="playType === '' || playType === 'playback'" @click="playback">播放录像流</button>
                         <button v-if="playType === '' || playType === 'playbackSpecial'" @click="playbackSpecial">
                             播放录像文件(流)
                         </button>
                         <button v-if="playType === '' || playType === 'playVod'" @click="playVod">播放点播文件</button>
                         <button v-if="playType === '' || playType === 'playVR'" @click="playVR">播放VR文件</button>
-                        <a href="/pro-demo.html" target="_blank" style="color: red">更多demo地址</a>
+                        <a href="/pro-demo.html" target="_blank">更多 Demo</a>
                     </template>
                     <template v-if="loading || playing">
                         <template v-if="playType === 'play'">
@@ -340,96 +388,129 @@
                     </template>
                 </div>
             </div>
-
-
-            <div class="input" style="line-height: 30px">
-                <button @click="destroyPlayer">销毁</button>
-                <template v-if="loaded">
-                    <button v-if="quieting" @click="cancelMute">取消静音</button>
-                    <template v-else>
-                        <button @click="mute">静音</button>
-                        <span>音量：</span>
-                        <select v-model="volume" @change="volumeChange">
-                            <option value="1">100</option>
-                            <option value="0.75">75</option>
-                            <option value="0.5">50</option>
-                            <option value="0.25">25</option>
-                        </select>
-                    </template>
-                    <span>旋转：</span>
-                    <select v-model="rotate" @change="rotateChange">
-                        <option value="0">0</option>
-                        <option value="90">90</option>
-                        <option value="18">180</option>
-                        <option value="270">270</option>
-                    </select>
-                    <span>镜像旋转:</span>
-                    <select v-model="mirrorRotate" @change="mirrorRotateChange">
-                        <option value="none">无</option>
-                        <option value="level">水平</option>
-                        <option value="vertical">垂直</option>
-                    </select>
-
-                    <button @click="fullscreen">全屏</button>
-                    <button @click="screenShot">截图</button>
-                    <button @click="screenshotWatermark1">截图(水印文字)</button>
-                    <button @click="screenshotWatermark2">截图(水印图片)</button>
-                    <template v-if="playType === 'playback' || playType === 'playbackSpecial'">
-                        <span>切换播放倍率:</span>
-                        <select v-model="playbackRate" @change="playbackRateChange">
-                            <option value="1">1倍</option>
-                            <option value="2">2倍</option>
-                            <option value="3">3倍</option>
-                            <option value="4">4倍</option>
-                        </select>
-
-                    </template>
-                </template>
-            </div>
-            <div class="input" v-if="loaded">
-                <button @click="screenShot">截图</button>
-                <button @click="screenShotBlob">截图(Blob)</button>
-                <button @click="screenShotBase64">截图(base64)</button>
-                <button @click="screenshotWatermark1">截图(水印文字)</button>
-                <button @click="screenshotWatermark1Blob">截图(水印文字)(Blob)</button>
-                <button @click="screenshotWatermark2">截图(水印图片)</button>
-                <button @click="screenshotWatermark2Blob">截图(水印图片)(Blob)</button>
-            </div>
-            <div class="input" v-if="loaded">
-                <select v-model="scale" @change="scaleChange">
-                    <option value="0">完全填充(拉伸)</option>
-                    <option value="1">等比缩放</option>
-                    <option value="2">完全填充(未拉伸)</option>
-                </select>
-                <button v-if="!playing" @click="clearView">清屏</button>
-                <template v-if="playing">
-                    <!--                    <select v-model="recordType">-->
-                    <!--                        <option value="webm">webm</option>-->
-                    <!--                        <option value="mp4">mp4</option>-->
-                    <!--                    </select>-->
-                    <button v-if="!recording" @click="startRecord">录制</button>
-                    <button v-if="!recording" @click="stopAndSaveRecord">暂停录制(下载)</button>
-                    <button v-if="!recording" @click="stopAndSaveRecord2">暂停录制(blob)</button>
-                </template>
-                <button @click="clearBufferDelay">手动消除延迟</button>
-                <input
-                    type="checkbox"
-                    v-model="toggleZoom"
-                    @change="toggleZoomOperate"
-                /><span>切换电子放大</span>
-            </div>
-            <div class="input" v-if="loaded">
-                <span style="color: red">画框（文字）（随机坐标）</span>：
-                <button @click="handleAddCanvas('text')">文本</button>
-                <button @click="handleAddCanvas('rect')">框子</button>
-                <button @click="handleAddCanvas('rect+text')">文本+框子</button>
-                <button @click="handleAddCanvasClean()">清空</button>
-            </div>
+            <template v-if="loaded">
+                <div class="input">
+                    <span class="player-action-label">控制</span>
+                    <div>
+                        <button @click="destroyPlayer">销毁</button>
+                        <button v-if="quieting" @click="cancelMute">取消静音</button>
+                        <template v-else>
+                            <button @click="mute">静音</button>
+                            <label class="player-field">
+                                <span>音量</span>
+                                <select v-model="volume" @change="volumeChange">
+                                    <option value="1">100</option>
+                                    <option value="0.75">75</option>
+                                    <option value="0.5">50</option>
+                                    <option value="0.25">25</option>
+                                </select>
+                            </label>
+                        </template>
+                        <button @click="fullscreen">全屏</button>
+                        <button @click="clearBufferDelay">手动消除延迟</button>
+                    </div>
+                </div>
+                <div class="input">
+                    <span class="player-action-label">画面</span>
+                    <div>
+                        <label class="player-field">
+                            <span>旋转</span>
+                            <select v-model="rotate" @change="rotateChange">
+                                <option value="0">0</option>
+                                <option value="90">90</option>
+                                <option value="18">180</option>
+                                <option value="270">270</option>
+                            </select>
+                        </label>
+                        <label class="player-field">
+                            <span>镜像</span>
+                            <select v-model="mirrorRotate" @change="mirrorRotateChange">
+                                <option value="none">无</option>
+                                <option value="level">水平</option>
+                                <option value="vertical">垂直</option>
+                            </select>
+                        </label>
+                        <label class="player-field">
+                            <span>填充</span>
+                            <select v-model="scale" @change="scaleChange">
+                                <option value="0">完全填充(拉伸)</option>
+                                <option value="1">等比缩放</option>
+                                <option value="2">完全填充(未拉伸)</option>
+                            </select>
+                        </label>
+                        <button v-if="!playing" @click="clearView">清屏</button>
+                        <label>
+                            <input
+                                type="checkbox"
+                                v-model="toggleZoom"
+                                @change="toggleZoomOperate"
+                            /><span>电子放大</span>
+                        </label>
+                    </div>
+                </div>
+                <div
+                    class="input"
+                    v-if="playType === 'playback' || playType === 'playbackSpecial'"
+                >
+                    <span class="player-action-label">回放</span>
+                    <div>
+                        <label class="player-field">
+                            <span>倍率</span>
+                            <select v-model="playbackRate" @change="playbackRateChange">
+                                <option value="1">1倍</option>
+                                <option value="2">2倍</option>
+                                <option value="3">3倍</option>
+                                <option value="4">4倍</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="input is-stack">
+                    <span class="player-action-label">截图</span>
+                    <div class="player-groups">
+                        <div class="player-group">
+                            <span class="player-group-label">导出</span>
+                            <div>
+                                <button @click="screenShot">下载</button>
+                                <button @click="screenShotBlob">Blob</button>
+                                <button @click="screenShotBase64">base64</button>
+                            </div>
+                        </div>
+                        <div class="player-group">
+                            <span class="player-group-label">水印</span>
+                            <div>
+                                <button @click="screenshotWatermark1">文字</button>
+                                <button @click="screenshotWatermark1Blob">文字 Blob</button>
+                                <button @click="screenshotWatermark2">图片</button>
+                                <button @click="screenshotWatermark2Blob">图片 Blob</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="input" v-if="playing">
+                    <span class="player-action-label">录制</span>
+                    <div>
+                        <button v-if="!recording" @click="startRecord">开始录制</button>
+                        <button v-if="!recording" @click="stopAndSaveRecord">暂停并下载</button>
+                        <button v-if="!recording" @click="stopAndSaveRecord2">暂停为 blob</button>
+                    </div>
+                </div>
+                <div class="input">
+                    <span class="player-action-label">画框</span>
+                    <div>
+                        <button @click="handleAddCanvas('text')">文本</button>
+                        <button @click="handleAddCanvas('rect')">框子</button>
+                        <button @click="handleAddCanvas('rect+text')">文本+框子</button>
+                        <button @click="handleAddCanvasClean()">清空</button>
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 </template>
 <script>
 import {ElNotification, ElMessage} from 'element-plus'
+import './player-shell.css'
 
 function getBrowser() {
     const UserAgent = window.navigator.userAgent.toLowerCase() || '';
@@ -567,6 +648,36 @@ function isPad() {
     return (/ipad|android(?!.*mobile)|tablet|kindle|silk/i.test(window.navigator.userAgent.toLowerCase()));
 }
 
+function defaultShowAdvanced() {
+    return !(isMobile() || isPad() || window.matchMedia('(max-width: 720px)').matches);
+}
+
+function waitForJessibucaPro(timeout = 30000) {
+    if (typeof window.JessibucaPro === 'function') {
+        return Promise.resolve();
+    }
+
+    const src = '/pro/js/jessibuca-pro-demo.js';
+    if (!document.querySelector(`script[src="${src}"]`)) {
+        const script = document.createElement('script');
+        script.src = src;
+        document.head.appendChild(script);
+    }
+
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const timer = setInterval(() => {
+            if (typeof window.JessibucaPro === 'function') {
+                clearInterval(timer);
+                resolve();
+            } else if (Date.now() - start > timeout) {
+                clearInterval(timer);
+                reject(new Error('window.JessibucaPro is not a constructor'));
+            }
+        }, 20);
+    });
+}
+
 
 function checkUrlIsValid(url) {
 
@@ -598,6 +709,30 @@ function checkUrlIsValid(url) {
     };
 }
 
+const OPERATE_BTN_OPTIONS = [
+    { key: 'fullscreen', label: '全屏' },
+    { key: 'screenshot', label: '截图' },
+    { key: 'play', label: '播放' },
+    { key: 'audio', label: '声音' },
+    { key: 'record', label: '录制' },
+    { key: 'ptz', label: '云台' },
+    { key: 'quality', label: '清晰度' },
+    { key: 'close', label: '关闭' },
+    { key: 'zoom', label: '电子放大' },
+    { key: 'performance', label: '性能' },
+    { key: 'scale', label: '显示比例' },
+];
+
+const MOBILE_DEFAULT_OPERATE_BTN_KEYS = ['fullscreen', 'play', 'audio', 'performance'];
+
+function createDefaultOperateBtns() {
+    const mobile = isMobile();
+    return OPERATE_BTN_OPTIONS.reduce((acc, item) => {
+        acc[item.key] = mobile ? MOBILE_DEFAULT_OPERATE_BTN_KEYS.includes(item.key) : true;
+        return acc;
+    }, {});
+}
+
 
 export default {
     name: "ProDemoPlayer",
@@ -617,7 +752,9 @@ export default {
             loading: false,
             loaded: false, // mute
             isMute: false, // 是否静音
-            showOperateBtns: true,
+            operateBtnOptions: OPERATE_BTN_OPTIONS,
+            operateBtns: createDefaultOperateBtns(),
+            showExtendOperateBtns: true,
             showBandwidth: true,
             hotKey: false,
             err: "",
@@ -688,9 +825,26 @@ export default {
             demuxUseWorker: true,
             mseDecoderUseWorker: false,
             isEdgeSupportHevc: false,// 默认
+            showAdvanced: defaultShowAdvanced(),
+            ffmpegDecodeDeblockMode: 'no',
         };
     },
-    mounted() {
+    computed: {
+        allOperateBtns: {
+            get() {
+                return this.operateBtnOptions.every((item) => this.operateBtns[item.key]) && this.showExtendOperateBtns;
+            },
+            set(value) {
+                this.operateBtnOptions.forEach((item) => {
+                    this.operateBtns[item.key] = value;
+                });
+                this.showExtendOperateBtns = value;
+            },
+        },
+    },
+    async mounted() {
+        this._alive = true;
+        this.syncAdvancedDom();
         if (window.VConsole && (isMobile() || isPad())) {
             this.vConsole = new window.VConsole();
         }
@@ -704,10 +858,21 @@ export default {
         this.isEdgeSupportHevc = browserInfo.type.toLowerCase() === 'edge' && (this.supportMSEHevc || this.supportWCSHevc);
 
         this.supportMT = typeof SharedArrayBuffer !== 'undefined';
-        this.create();
         window.onerror = (msg) => (this.err = msg);
+        try {
+            await waitForJessibucaPro();
+            if (!this._alive) return;
+            this.create();
+        } catch (e) {
+            console.error(e);
+            this.err = e && e.message ? e.message : String(e);
+        }
+    },
+    updated() {
+        this.syncAdvancedDom();
     },
     async unmounted() {
+        this._alive = false;
         if (this.jessibuca) {
             await this.jessibuca.destroy()
             this.jessibuca = null
@@ -717,8 +882,25 @@ export default {
         }
     },
     methods: {
+        syncAdvancedDom() {
+            const root = this.$el;
+            if (!root || !root.classList) return;
+            root.classList.toggle('is-advanced-open', this.showAdvanced);
+            const btn = root.querySelector('.player-advanced-toggle');
+            if (btn) {
+                btn.setAttribute('aria-expanded', this.showAdvanced ? 'true' : 'false');
+            }
+        },
+        toggleAdvanced() {
+            this.showAdvanced = !this.showAdvanced;
+            this.syncAdvancedDom();
+        },
         create(options) {
             options = options || {};
+            if (typeof window.JessibucaPro !== 'function') {
+                console.error('window.JessibucaPro is not a constructor');
+                return;
+            }
             const jessibuca = new window.JessibucaPro(
                 Object.assign(
                     {
@@ -726,6 +908,7 @@ export default {
                         decoder: '/pro/js/decoder-pro.js',
                         videoBuffer: Number(this.videoBuffer), // 缓存时长
                         videoBufferDelay: Number(this.videoBufferDelay),
+                        networkDelay: Number(this.networkDelay),
                         isResize: false,
                         useWCS: this.useWCS,
                         decoderErrorAutoWasm: this.decoderErrorAutoWasm,
@@ -748,20 +931,8 @@ export default {
                         supportDblclickFullscreen: true,
                         showBandwidth: this.showBandwidth, // 显示网速
                         qualityConfig: ['普清', '高清', '超清', '4K', '8K'],
-                        operateBtns: {
-                            fullscreen: this.showOperateBtns,
-                            screenshot: this.showOperateBtns,
-                            record: this.showOperateBtns,
-                            play: this.showOperateBtns,
-                            audio: this.showOperateBtns,
-                            ptz: this.showOperateBtns,
-                            quality: this.showOperateBtns,
-                            close: this.showOperateBtns,
-                            zoom: this.showOperateBtns,
-                            performance: this.showOperateBtns,
-                            scale: this.showOperateBtns
-                        },
-                        extendOperateBtns: [
+                        operateBtns: { ...this.operateBtns },
+                        extendOperateBtns: this.showExtendOperateBtns ? [
                             {
                                 name: 'testBtn',
                                 index: 2,
@@ -778,10 +949,12 @@ export default {
                                     ElMessage.success('点击了test按钮 active状态')
                                 },
                             },
-                        ],
+                        ]:[],
                         isFlv: this.isFlv,
                         isFmp4: this.isFmp4,
                         isHls: this.isHls,
+                        isTs: this.isTs,
+                        isPs: this.isPs,
                         isNakedFlow: this.isNakedFlow,
                         hiddenAutoPause: this.hiddenAutoPause,
                         forceNoOffscreen: !this.useOffscreen,
@@ -792,7 +965,7 @@ export default {
                         timeout: 10,
                         useVideoRender: this.renderDom === 'video',
                         useCanvasRender: this.renderDom === 'canvas',
-                        networkDelayTimeoutReplay: false,
+                        networkDelayTimeoutReplay: this.networkDelayTimeoutReplay,
                         playbackForwardMaxRateDecodeIFrame: 8,
                         checkFirstIFrame: this.checkFirstIFrame,
                         watermarkConfig: {
@@ -841,6 +1014,7 @@ export default {
                         demuxUseWorker: this.demuxUseWorker,
                         mseDecoderUseWorker: this.mseDecoderUseWorker,
                         isIgnoreExceptionFrame: this.isIgnoreExceptionFrame,
+                        ffmpegDecodeDeblockMode: this.ffmpegDecodeDeblockMode,
                     },
                     options
                 )
@@ -1004,7 +1178,9 @@ export default {
                     ElMessage.error(checkResult.msg);
                     return;
                 }
-                this.jessibuca.play(this.playUrl).then(() => {
+                this.jessibuca.play(this.playUrl,{
+                    useLastFrameShow:true,
+                }).then(() => {
                     ElMessage.success('play success');
                 }).catch((err) => {
                     ElMessage.error('播放失败');
@@ -1630,79 +1806,6 @@ export default {
 }
 </style>
 <style scoped>
-.root {
-    display: flex;
-    place-content: center;
-    margin-top: 3rem;
-    position: relative;
-}
-
-.container-shell {
-    position: relative;
-    backdrop-filter: blur(5px);
-    background: hsla(0, 0%, 50%, 0.5);
-    padding: 30px 4px 10px 4px;
-    /* border: 2px solid black; */
-    width: auto;
-    position: relative;
-    border-radius: 5px;
-    box-shadow: 0 10px 20px;
-}
-
-.container-shell-title {
-    position: absolute;
-    color: darkgray;
-    top: 4px;
-    left: 10px;
-    text-shadow: 1px 1px black;
-}
-
-.tag-version {
-}
-
-#container {
-    background: rgba(13, 14, 27, 0.7);
-    width: 900px;
-    height: 568px;
-}
-
-.input {
-    display: flex;
-    align-items: center;
-    margin-top: 3px;
-    color: white;
-    place-content: stretch;
-    border-bottom: 1px solid #ccc;
-    justify-content: start;
-}
-
-.input-wrap {
-    justify-content: space-between;
-}
-
-.input2 {
-    bottom: 0px;
-}
-
-.input input[type='input'] {
-    flex: auto;
-}
-
-.input-annnie {
-    position: relative;
-    height: 20px;
-    overflow: hidden;
-}
-
-.input-tips {
-    position: absolute;
-    width: 100%;
-    text-align: right;
-    top: 0;
-    left: 0;
-    animation: ani 20s linear infinite;
-}
-
 .err {
     position: absolute;
     top: 40px;
@@ -1715,26 +1818,6 @@ export default {
     margin-right: 10px;
 }
 
-.option {
-    position: absolute;
-    top: 4px;
-    right: 10px;
-    display: flex;
-    place-content: center;
-    align-items: center;
-    font-size: 12px;
-}
-
-.option span {
-    color: white;
-}
-
-.page {
-    background: url(/bg.jpg);
-    background-repeat: no-repeat;
-    background-position: top;
-}
-
 .show-message {
     position: fixed;
     z-index: 10000;
@@ -1745,11 +1828,16 @@ export default {
     background: rgba(0, 0, 0, 0.2);
     color: #fff;
 }
+</style>
 
-@media (max-width: 720px) {
-    #container {
-        width: 90vw;
-        height: 52.7vw;
-    }
+<style>
+.page {
+    background: url(/bg.jpg);
+    background-repeat: no-repeat;
+    background-position: top;
+}
+
+html.dark .page {
+    background: none;
 }
 </style>
